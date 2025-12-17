@@ -12,13 +12,17 @@ LIBRARY_IOC += caenV1290N
 
 # xxxRecord.h will be created from xxxRecord.dbd
 #DBDINC += xxxRecord
-# install caenV1290N.dbd into <top>/dbd
+# install drvCaenV1290N.dbd into <top>/dbd
 DBD += caenV1290NSupport.dbd
 
 caenV1290NSupport_DBD += drvCaenV1290N.dbd
 
 # specify all source files to be compiled and added to the library
-caenV1290N_SRCS += drvCaenV1290N.cpp
+# TODO
+# ifneq ($(OS_CLASS), Linux)
+    # caenV1290N_SRCS += drvCaenV1290N.cpp
+# endif
+caenV1290N_SRCS_vxWorks += drvCaenV1290N.cpp
 
 caenV1290N_LIBS += asyn
 caenV1290N_LIBS += $(EPICS_BASE_IOC_LIBS)
