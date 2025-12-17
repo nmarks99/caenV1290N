@@ -1,4 +1,3 @@
-
 #include <stdlib.h>
 
 #include <epicsTypes.h>
@@ -13,17 +12,21 @@
 
 #define MAX_CHANNELS 16
 
-static const char *driverName = "CAEN_V1290N";
+// static const char *driverName = "CAEN_V1290N";
 
 // Register Offsets
-#define V1290_FIRMWARE_REV  0x1026  // D16
-#define V1290_SW_CLEAR      0x1016  // D16, Write-only
+#define V1290_FIRMWARE_REV  0x1026 // D16
+#define V1290_SW_CLEAR      0x1016 // D16
+#define V1290_OUT_BUF       0x0000 // D32
+#define V1290_CONTROL       0x1000 // D16
+#define V1290_TESTREG       0x1028 // D16
+#define V1290_SW_TRIGGER    0x101A // D16
+
+#define TEST_FIFO_ENABLE 0b01000000
 
 class CaenV1290N : public asynPortDriver {
   public:
     CaenV1290N(const char *portName, int baseAddress);
-  private:
-    volatile unsigned short *regs;
 };
 
 // #define NUM_PARAMS (&LAST_PARAM - &FIRST_PARAM + 1)
@@ -35,38 +38,45 @@ CaenV1290N::CaenV1290N(const char *portName, int baseAddress)
                      0) // Default priority and stack size
 {
 
+    // initialize
     volatile void *ptr;
     const unsigned int EXTENT = 0x04000000; // 64MB window
     if (devRegisterAddress("CAEN_V1290N", atVMEA32, baseAddress, EXTENT, &ptr)) {
 	printf("ERROR: devRegisterAddress failed. Cannot initialize board.\n");
 	return;
     }
-    regs = (volatile unsigned short*)ptr;
-    printf("Success?\n");
 
-    // char *vmeAddress;
-    // // 1. Map the VME address to local memory.
-    // // Use VME_AM_STD_SUP_DATA (0x3D) for A24 or VME_AM_EXT_SUP_DATA (0x09) for A32.
-    // if (sysBusToLocalAdrs(VME_AM_STD_SUP_DATA, (char*)baseAddress, &vmeAddress) != OK) {
-        // printf("Error: Could not map VME address 0x%08X\n", baseAddress);
-        // return;
-    // }
-    // regs = (volatile unsigned short *)vmeAddress;
+    volatile uint16_t *regs16 = (volatile uint16_t*)ptr;
+    volatile uint32_t *regs32 = (volatile uint32_t*)ptr;
 
-    // 2. Optional: Initialize/Clear the board
     // Writing any value to the Software Clear Register resets logic and clears buffers.
-    regs[V1290_SW_CLEAR / 2] = 1;
+    regs16[V1290_SW_CLEAR / 2] = 1;
     printf("Board logic cleared.\n");
 
-    // 3. Read the Firmware Revision Register
-    // Note: Offset is divided by 2 because 'regs' is a 16-bit pointer.
-    unsigned short revValue = regs[V1290_FIRMWARE_REV / 2];
+    // Read the Firmware Revision Register
+    uint16_t rev = regs16[V1290_FIRMWARE_REV / 2];
+    int major = (rev >> 4) & 0x0F;
+    int minor = rev & 0x0F;
+    printf("V1290 Firmware Revision: %d.%d (Raw: 0x%04X)\n", major, minor, rev);
 
-    // 4. Decode the revision components
-    int major = (revValue >> 4) & 0x0F;
-    int minor = revValue & 0x0F;
 
-    printf("V1290 Firmware Revision: %d.%d (Raw: 0x%04X)\n", major, minor, revValue);
+    // =====================================================================
+
+    // Enable test mode
+    printf("Reading control register...\n");
+    uint16_t ctrl_reg = regs16[V1290_CONTROL / 2];
+    printf("Control register = %X\n", ctrl_reg);
+    printf("Setting TEST_FIFO_ENABLE bit in control register\n");
+    ctrl_reg |= TEST_FIFO_ENABLE;
+    regs16[V1290_CONTROL / 2] = ctrl_reg;
+
+    // write test data into test register
+    printf("Writing %X into test register...\n", 0xDEADBEEF);
+    regs32[V1290_TESTREG / 4] = 0xDEADBEEF;
+
+    // Generate a software trigger
+    printf("Generating software trigger...\n");
+    regs16[V1290_SW_TRIGGER / 2] = 1;
 
 }
 
