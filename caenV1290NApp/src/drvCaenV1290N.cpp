@@ -19,14 +19,36 @@
 #define V1290_SW_CLEAR      0x1016 // D16
 #define V1290_OUT_BUF       0x0000 // D32
 #define V1290_CONTROL       0x1000 // D16
-#define V1290_TESTREG       0x1028 // D16
+#define V1290_TESTREG       0x1028 // D32
 #define V1290_SW_TRIGGER    0x101A // D16
+#define V1290_DUMMY32       0x1200 // D32
+#define V1290_DUMMY16       0x1204 // D16
 
 #define TEST_FIFO_ENABLE 0b01000000
 
 class CaenV1290N : public asynPortDriver {
   public:
     CaenV1290N(const char *portName, int baseAddress);
+    // virtual asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
+
+  private:
+    volatile uint8_t *base;
+
+    inline void writeD16(uint16_t offset, uint16_t value) {
+	*reinterpret_cast<volatile uint16_t*>(base+offset) = value;
+    }
+
+    inline uint16_t readD16(uint16_t offset) {
+	return *reinterpret_cast<volatile uint16_t*>(base+offset);
+    }
+
+    inline void writeD32(uint32_t offset, uint32_t value) {
+	*reinterpret_cast<volatile uint32_t*>(base+offset) = value;
+    }
+
+    inline uint32_t readD32(uint32_t offset) {
+	return *reinterpret_cast<volatile uint32_t*>(base+offset);
+    }
 };
 
 // #define NUM_PARAMS (&LAST_PARAM - &FIRST_PARAM + 1)
@@ -40,45 +62,55 @@ CaenV1290N::CaenV1290N(const char *portName, int baseAddress)
 
     // initialize
     volatile void *ptr;
-    const unsigned int EXTENT = 0x04000000; // 64MB window
+    // const unsigned int EXTENT = 0x04000000; // 64MB window
+    const unsigned int EXTENT = 0x1000; // 64MB window
     if (devRegisterAddress("CAEN_V1290N", atVMEA32, baseAddress, EXTENT, &ptr)) {
 	printf("ERROR: devRegisterAddress failed. Cannot initialize board.\n");
 	return;
     }
 
-    volatile uint16_t *regs16 = (volatile uint16_t*)ptr;
-    volatile uint32_t *regs32 = (volatile uint32_t*)ptr;
+    base = (volatile uint8_t*)ptr;
 
     // Writing any value to the Software Clear Register resets logic and clears buffers.
-    regs16[V1290_SW_CLEAR / 2] = 1;
+    writeD16(V1290_SW_CLEAR, 1);
     printf("Board logic cleared.\n");
 
     // Read the Firmware Revision Register
-    uint16_t rev = regs16[V1290_FIRMWARE_REV / 2];
+    uint16_t rev = readD16(V1290_FIRMWARE_REV);
     int major = (rev >> 4) & 0x0F;
     int minor = rev & 0x0F;
     printf("V1290 Firmware Revision: %d.%d (Raw: 0x%04X)\n", major, minor, rev);
-
 
     // =====================================================================
 
     // Enable test mode
     printf("Reading control register...\n");
-    uint16_t ctrl_reg = regs16[V1290_CONTROL / 2];
+    uint16_t ctrl_reg = readD16(V1290_CONTROL);
     printf("Control register = %X\n", ctrl_reg);
     printf("Setting TEST_FIFO_ENABLE bit in control register\n");
     ctrl_reg |= TEST_FIFO_ENABLE;
-    regs16[V1290_CONTROL / 2] = ctrl_reg;
+    writeD16(V1290_CONTROL, ctrl_reg);
 
-    // write test data into test register
+    // write test data into test registers
     printf("Writing %X into test register...\n", 0xDEADBEEF);
-    regs32[V1290_TESTREG / 4] = 0xDEADBEEF;
+    writeD32(V1290_TESTREG, 0xDEADBEEF);
+    printf("Read test reg = %X\n", readD32(V1290_TESTREG));
+
+    printf("Writing %X into Dummy32 register...\n", 0xCAFEBABE);
+    writeD32(V1290_DUMMY32, 0xCAFEBABE);
+    printf("Read Dummy32 reg = %X\n", readD32(V1290_DUMMY32));
+
+    printf("Writing %X into Dummy16 register...\n", 0xCAFE);
+    writeD16(V1290_DUMMY16, 0xCAFE);
+    printf("Read Dummy16 reg = %X\n", readD16(V1290_DUMMY16));
 
     // Generate a software trigger
     printf("Generating software trigger...\n");
-    regs16[V1290_SW_TRIGGER / 2] = 1;
+    writeD16(V1290_SW_TRIGGER, 1);
 
 }
+
+// asynStatus CaenV1290N::writeInt32(asynUser *pasynUser, epicsInt32 value);
 
 extern "C" int initCaenV1290N(const char *portName, int baseAddress) {
     new CaenV1290N("CAENV1290N_TEST", 0xB2000000); // hack
