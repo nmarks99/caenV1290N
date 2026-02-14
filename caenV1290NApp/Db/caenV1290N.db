@@ -1,0 +1,10 @@
+record(mbbo, "$(P)AcqMode") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR=0))ACQ_MODE")
+    field(ZRVL, 0)
+    field(ZRST, "Zero")
+    field(ONVL, 1)
+    field(ONST, "One")
+    field(TWVL, 2)
+    field(TWST, "Two")
+}
