@@ -8,23 +8,27 @@
 #include <epicsThread.h>
 #include <epicsTypes.h>
 #include <errMdef.h>
+#include <stdint.h>
 #include <iocsh.h>
 
 #include "V1290N.hpp"
 
 // String names for asyn parameters
-#define ACQ_MODE_STR "ACQ_MODE"
+#define ACQUISITION_MODE_STR "ACQUISITION_MODE"
+#define EDGE_DETECT_MODE_STR "EDGE_DETECT_MODE"
 
 class CaenV1290N : public asynPortDriver {
   public:
     CaenV1290N(const char* portName, int baseAddress);
     virtual asynStatus writeInt32(asynUser* pasynUser, epicsInt32 value);
+    virtual asynStatus readInt32(asynUser *pasynUser, epicsInt32 *value);
 
   private:
     volatile uint8_t* base;
 
-    asynStatus wait_handshake(uint16_t mask);
-    asynStatus write_opcode(uint16_t code);
+    bool wait_micro_handshake(uint16_t mask);
+    bool write_opcode(uint16_t mask);
+    bool read_opcode(uint16_t mask);
 
     inline void writeD16(uint16_t offset, uint16_t value) { nat_iowrite16(base + offset, value); }
     inline uint16_t readD16(uint16_t offset) { return nat_ioread16(base + offset); }
@@ -32,7 +36,8 @@ class CaenV1290N : public asynPortDriver {
     inline uint32_t readD32(uint32_t offset) { return nat_ioread32(base + offset); }
 
   protected:
-    int acqModeId_;
+    int acquisitionModeId_;
+    int edgeDetectModeId_;
 };
 
 // #define NUM_PARAMS (&LAST_PARAM - &FIRST_PARAM + 1)
@@ -64,7 +69,8 @@ CaenV1290N::CaenV1290N(const char* portName, int baseAddress)
     int minor = rev & 0x0F;
     printf("V1290 Firmware Revision: %d.%d (Raw: 0x%04X)\n\n", major, minor, rev);
 
-    createParam(ACQ_MODE_STR, asynParamInt32, &acqModeId_);
+    createParam(ACQUISITION_MODE_STR, asynParamInt32, &acquisitionModeId_);
+    createParam(EDGE_DETECT_MODE_STR, asynParamInt32, &edgeDetectModeId_);
 
     // // =====================================================================
     // // Enable test mode
@@ -90,45 +96,56 @@ CaenV1290N::CaenV1290N(const char* portName, int baseAddress)
     // writeD16(V1290_SW_TRIGGER, 1);
 }
 
-
-asynStatus CaenV1290N::wait_handshake(uint16_t mask) {
+bool CaenV1290N::wait_micro_handshake(uint16_t mask) {
     uint16_t timeout = 1000;
     while ((readD16(Register::MicroHandshake) & mask) == 0 && timeout > 0) {
 	epicsThreadSleep(0.001);
 	timeout--;
     }
-    return (timeout > 0) ? asynSuccess : asynError;
-}
+    printf("timeout = %d\n", timeout);
+    return (timeout > 0) ? true : false;
+};
 
-asynStatus CaenV1290N::write_opcode(uint16_t code) {
-    if (wait_handshake(Handshake::WriteOk) != asynSuccess) return asynError;
-    writeD16(Register::Micro, code);
-    return asynSuccess;
+asynStatus CaenV1290N::readInt32(asynUser *pasynUser, epicsInt32 *value) {
+    const int function = pasynUser->reason;
+    asynStatus asyn_status = asynSuccess;
+
+
+    if (function == edgeDetectModeId_) {
+	if(!wait_micro_handshake(Handshake::WriteOk)) {
+	    printf("Timeout waiting for micro handshake write\n");
+	    return asynError;
+	}
+	printf("Write okay, continuing\n");
+	writeD16(Register::Micro, Opcode::ReadEdgeDetectionConfig);
+	printf("Write done\n");
+
+	if (!wait_micro_handshake(Handshake::ReadOk)) {
+	    printf("Timeout waiting for micro handshake read\n");
+	    return asynError;
+	}
+	printf("Read okay, continuing\n");
+	uint16_t edge_detect_mode = readD16(Register::Micro);
+	printf("Micro register = 0x%X\n", edge_detect_mode);
+	*value = edge_detect_mode;
+    }
+
+    return asyn_status;
 }
 
 asynStatus CaenV1290N::writeInt32(asynUser* pasynUser, epicsInt32 value) {
     const int function = pasynUser->reason;
     asynStatus asyn_status = asynSuccess;
 
-    if (function == acqModeId_) {
-        printf("Set aquisition mode %d called\n", value);
-	if (value == 0) {
-	    write_opcode(Opcode::SetTriggerMatch);
-	} else if (value == 1) {
-	    write_opcode(Opcode::SetContinuous);
-	}
+    if (function == edgeDetectModeId_) {
+	printf("writeInt32 called for edgeDetectModeId_\n");
     }
-
-    if (write_opcode(Opcode::ReadAcqMode) != asynSuccess) return asynError;
-    if (wait_handshake(Handshake::ReadOk) != asynSuccess) return asynError;
-    uint16_t val = readD16(Register::Micro);
-    printf("acqusition mode = %d\n", val & 0x1);
 
     return asyn_status;
 }
 
 extern "C" int initCaenV1290N(const char* portName, int baseAddress) {
-    new CaenV1290N(portName, 0xB2000000); // hack
+    new CaenV1290N(portName, baseAddress);
     return (asynSuccess);
 }
 

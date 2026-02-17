@@ -1,10 +1,45 @@
-record(mbbo, "$(P)AcqMode") {
+record(mbbo, "$(P)$(R)AcquisitionMode") {
     field(DTYP, "asynInt32")
-    field(OUT,  "@asyn($(PORT),$(ADDR=0))ACQ_MODE")
+    field(OUT,  "@asyn($(PORT),$(ADDR=0))ACQUISITION_MODE")
     field(ZRVL, 0)
     field(ZRST, "Zero")
     field(ONVL, 1)
     field(ONST, "One")
     field(TWVL, 2)
     field(TWST, "Two")
+}
+record(mbbi, "$(P)$(R)AcquisitionModeRBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR=0))ACQUISITION_MODE")
+    field(ZRVL, 0)
+    field(ZRST, "Zero")
+    field(ONVL, 1)
+    field(ONST, "One")
+    field(TWVL, 2)
+    field(TWST, "Two")
+}
+
+record(mbbo, "$(P)$(R):EdgeDetectMode") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR=0))EDGE_DETECT_MODE")
+    field(ZRVL, 0)
+    field(ZRST, "Pair")
+    field(ONVL, 1)
+    field(ONST, "Trailing")
+    field(TWVL, 2)
+    field(TWST, "Leading")
+    field(THVL, 3)
+    field(THST, "Trailing & Leading")
+}
+record(mbbi, "$(P)$(R):EdgeDetectModeRBV") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR=0))EDGE_DETECT_MODE")
+    field(ZRVL, 0)
+    field(ZRST, "Pair")
+    field(ONVL, 1)
+    field(ONST, "Trailing")
+    field(TWVL, 2)
+    field(TWST, "Leading")
+    field(THVL, 3)
+    field(THST, "Trailing & Leading")
 }
