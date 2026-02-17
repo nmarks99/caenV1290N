@@ -16,6 +16,7 @@
 // String names for asyn parameters
 #define ACQUISITION_MODE_STR "ACQUISITION_MODE"
 #define EDGE_DETECT_MODE_STR "EDGE_DETECT_MODE"
+#define ENABLE_PATTERN_STR "ENABLE_PATTERN"
 
 class CaenV1290N : public asynPortDriver {
   public:
@@ -83,6 +84,7 @@ class CaenV1290N : public asynPortDriver {
   protected:
     int acquisitionModeId_;
     int edgeDetectModeId_;
+    int enablePatternId_;
 };
 
 
@@ -113,33 +115,35 @@ CaenV1290N::CaenV1290N(const char* portName, int baseAddress)
 
     createParam(ACQUISITION_MODE_STR, asynParamInt32, &acquisitionModeId_);
     createParam(EDGE_DETECT_MODE_STR, asynParamInt32, &edgeDetectModeId_);
+    createParam(ENABLE_PATTERN_STR, asynParamInt32, &enablePatternId_);
 }
 
 asynStatus CaenV1290N::readInt32(asynUser* pasynUser, epicsInt32* value) {
     const int function = pasynUser->reason;
-    asynStatus asyn_status = asynSuccess;
 
     if (function == edgeDetectModeId_) {
 	if (!read_micro(Opcode::ReadEdgeDetectionMode, *value)) return asynError;
     } else if (function == acquisitionModeId_) {
 	if (!read_micro(Opcode::ReadAcquisitionMode, *value)) return asynError;
+    } else if (function == enablePatternId_) {
+	if (!read_micro(Opcode::ReadEnablePattern, *value)) return asynError;
     }
 
-    return asyn_status;
+    return asynSuccess;
 }
 
 asynStatus CaenV1290N::writeInt32(asynUser* pasynUser, epicsInt32 value) {
     const int function = pasynUser->reason;
-    asynStatus asyn_status = asynSuccess;
 
     if (function == edgeDetectModeId_) {
 	if (!write_micro(Opcode::SetEdgeDetectionMode, value)) return asynError;
-    }
-    else if (function == acquisitionModeId_) {
+    } else if (function == acquisitionModeId_) {
 	if (!write_micro(value == 0 ? Opcode::SetContinuous : Opcode::SetTriggerMatch)) return asynError;
+    } else if (function == enablePatternId_) {
+	if (!write_micro(Opcode::WriteEnablePattern, value)) return asynError;
     }
 
-    return asyn_status;
+    return asynSuccess;
 }
 
 extern "C" int initCaenV1290N(const char* portName, int baseAddress) {

@@ -43,3 +43,24 @@ record(mbbi, "$(P)$(R):EdgeDetectModeRBV") {
     field(THVL, 3)
     field(THST, "Trailing & Leading")
 }
+
+record(longout, "$(P)$(R):EnableAll") {
+    field(VAL, 65535)
+    field(OUT, "$(P)$(R):EnableBits.VAL PP")
+}
+record(longout, "$(P)$(R):DisableAll") {
+    field(VAL, 0)
+    field(OUT, "$(P)$(R):EnableBits.VAL PP")
+}
+record(longout, "$(P)$(R):EnableBits") {
+    field(DTYP, "asynInt32")
+    field(DRVH, 65535)
+    field(DRVL, 0)
+    field(OUT,  "@asyn($(PORT),$(ADDR=0))ENABLE_PATTERN")
+    field(FLNK, "$(P)$(R):EnableBitsRBV.PROC")
+}
+record(longin, "$(P)$(R):EnableBitsRBV") {
+    field(DTYP, "asynInt32")
+    field(PINI, "YES")
+    field(INP,  "@asyn($(PORT),$(ADDR=0))ENABLE_PATTERN")
+}

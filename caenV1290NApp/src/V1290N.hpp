@@ -80,4 +80,8 @@ static const uint16_t SetContinuous = 0x0100;
 static const uint16_t ReadAcquisitionMode = 0x0200;
 static const uint16_t SetEdgeDetectionMode = 0x2200;
 static const uint16_t ReadEdgeDetectionMode = 0x2300;
+static const uint16_t WriteEnablePattern = 0x4400;
+static const uint16_t ReadEnablePattern = 0x4500;
+static const uint16_t EnableChannelBase = 0x4000;
+static const uint16_t DisableChannelBase = 0x4100;
 } // namespace Opcode
