@@ -5,10 +5,10 @@ file {
 }
 display {
 	object {
-		x=569
-		y=897
-		width=826
-		height=662
+		x=591
+		y=1028
+		width=700
+		height=650
 	}
 	clr=14
 	bclr=4
@@ -87,12 +87,23 @@ display {
 		1a7309,
 	}
 }
+rectangle {
+	object {
+		x=0
+		y=0
+		width=700
+		height=30
+	}
+	"basic attribute" {
+		clr=54
+	}
+}
 menu {
 	object {
-		x=265
-		y=105
-		width=200
-		height=25
+		x=230
+		y=109
+		width=175
+		height=20
 	}
 	control {
 		chan="namVME:V1290N:EdgeDetectMode.VAL"
@@ -102,21 +113,22 @@ menu {
 }
 text {
 	object {
-		x=15
-		y=105
-		width=240
-		height=25
+		x=10
+		y=109
+		width=210
+		height=20
 	}
 	"basic attribute" {
 		clr=14
 	}
 	textix="Edge Detection Mode:"
+	align="horiz. right"
 }
 "text update" {
 	object {
-		x=265
-		y=80
-		width=130
+		x=415
+		y=110
+		width=200
 		height=20
 	}
 	monitor {
@@ -126,4 +138,57 @@ text {
 	}
 	limits {
 	}
+}
+menu {
+	object {
+		x=229
+		y=80
+		width=175
+		height=20
+	}
+	control {
+		chan="namVME:V1290N:AcquisitionMode.VAL"
+		clr=14
+		bclr=4
+	}
+}
+text {
+	object {
+		x=10
+		y=80
+		width=210
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Acquisition Mode:"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=414
+		y=80
+		width=200
+		height=20
+	}
+	monitor {
+		chan="namVME:V1290N:AcquisitionModeRBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=5
+		y=5
+		width=320
+		height=20
+	}
+	"basic attribute" {
+		clr=0
+	}
+	textix="CAEN V1290N TDC"
 }

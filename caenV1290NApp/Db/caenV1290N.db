@@ -1,22 +1,20 @@
-record(mbbo, "$(P)$(R)AcquisitionMode") {
+record(mbbo, "$(P)$(R):AcquisitionMode") {
     field(DTYP, "asynInt32")
     field(OUT,  "@asyn($(PORT),$(ADDR=0))ACQUISITION_MODE")
     field(ZRVL, 0)
-    field(ZRST, "Zero")
+    field(ZRST, "Continuous")
     field(ONVL, 1)
-    field(ONST, "One")
-    field(TWVL, 2)
-    field(TWST, "Two")
+    field(ONST, "Trigger Matching")
+    field(FLNK, "$(P)$(R):AcquisitionModeRBV.PROC")
 }
-record(mbbi, "$(P)$(R)AcquisitionModeRBV") {
+record(mbbi, "$(P)$(R):AcquisitionModeRBV") {
     field(DTYP, "asynInt32")
+    field(PINI, "YES")
     field(INP,  "@asyn($(PORT),$(ADDR=0))ACQUISITION_MODE")
     field(ZRVL, 0)
-    field(ZRST, "Zero")
+    field(ZRST, "Continuous")
     field(ONVL, 1)
-    field(ONST, "One")
-    field(TWVL, 2)
-    field(TWST, "Two")
+    field(ONST, "Trigger Matching")
 }
 
 record(mbbo, "$(P)$(R):EdgeDetectMode") {
@@ -30,9 +28,11 @@ record(mbbo, "$(P)$(R):EdgeDetectMode") {
     field(TWST, "Leading")
     field(THVL, 3)
     field(THST, "Trailing & Leading")
+    field(FLNK, "$(P)$(R):EdgeDetectModeRBV.PROC")
 }
 record(mbbi, "$(P)$(R):EdgeDetectModeRBV") {
     field(DTYP, "asynInt32")
+    field(PINI, "YES")
     field(INP,  "@asyn($(PORT),$(ADDR=0))EDGE_DETECT_MODE")
     field(ZRVL, 0)
     field(ZRST, "Pair")

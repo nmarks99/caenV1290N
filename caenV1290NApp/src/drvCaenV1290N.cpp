@@ -26,22 +26,65 @@ class CaenV1290N : public asynPortDriver {
   private:
     volatile uint8_t* base;
 
-    bool wait_micro_handshake(uint16_t mask);
-    bool write_opcode(uint16_t mask);
-    bool read_opcode(uint16_t mask);
+    bool wait_micro_handshake(uint16_t mask) {
+	uint16_t timeout = 1000;
+	while ((readD16(Register::MicroHandshake) & mask) == 0 && timeout > 0) {
+	    epicsThreadSleep(0.0001);
+	    timeout--;
+	}
+	return (timeout > 0) ? true : false;
+    };
 
-    inline void writeD16(uint16_t offset, uint16_t value) { nat_iowrite16(base + offset, value); }
-    inline uint16_t readD16(uint16_t offset) { return nat_ioread16(base + offset); }
-    inline void writeD32(uint32_t offset, uint32_t value) { nat_iowrite32(base + offset, value); }
-    inline uint32_t readD32(uint32_t offset) { return nat_ioread32(base + offset); }
+    bool write_micro(uint16_t opcode, uint16_t val) {
+	if(!wait_micro_handshake(Handshake::WriteOk)) {
+	    printf("Timeout waiting for micro handshake write\n");
+	    return false;
+	}
+	writeD16(Register::Micro, opcode);
+
+	if(!wait_micro_handshake(Handshake::WriteOk)) {
+	    printf("Timeout waiting for micro handshake write\n");
+	    return false;
+	}
+	writeD16(Register::Micro, val);
+	return true;
+    }
+
+    bool write_micro(uint16_t opcode) {
+	if(!wait_micro_handshake(Handshake::WriteOk)) {
+	    printf("Timeout waiting for micro handshake write\n");
+	    return false;
+	}
+	writeD16(Register::Micro, opcode);
+	return true;
+    }
+
+    template<typename T>
+    bool read_micro(uint16_t opcode, T& retval) {
+	if(!wait_micro_handshake(Handshake::WriteOk)) {
+	    printf("Timeout waiting for micro handshake write\n");
+	    return false;
+	}
+	writeD16(Register::Micro, opcode);
+
+	if (!wait_micro_handshake(Handshake::ReadOk)) {
+	    printf("Timeout waiting for micro handshake read\n");
+	    return false;
+	}
+	retval = readD16(Register::Micro);
+	return true;
+    }
+
+    void writeD16(uint16_t offset, uint16_t value) { nat_iowrite16(base + offset, value); }
+    uint16_t readD16(uint16_t offset) { return nat_ioread16(base + offset); }
+    void writeD32(uint32_t offset, uint32_t value) { nat_iowrite32(base + offset, value); }
+    uint32_t readD32(uint32_t offset) { return nat_ioread32(base + offset); }
 
   protected:
     int acquisitionModeId_;
     int edgeDetectModeId_;
 };
 
-// #define NUM_PARAMS (&LAST_PARAM - &FIRST_PARAM + 1)
-#define NUM_PARAMS 0
 
 CaenV1290N::CaenV1290N(const char* portName, int baseAddress)
     : asynPortDriver(portName, MAX_CHANNELS, asynInt32Mask | asynFloat64Mask | asynDrvUserMask,
@@ -61,7 +104,6 @@ CaenV1290N::CaenV1290N(const char* portName, int baseAddress)
 
     // Writing any value to the Software Clear Register resets logic and clears buffers.
     writeD16(Register::SwClear, 1);
-    printf("Board logic cleared.\n\n");
 
     // Read the Firmware Revision Register
     uint16_t rev = readD16(Register::FirmwareRev);
@@ -71,63 +113,16 @@ CaenV1290N::CaenV1290N(const char* portName, int baseAddress)
 
     createParam(ACQUISITION_MODE_STR, asynParamInt32, &acquisitionModeId_);
     createParam(EDGE_DETECT_MODE_STR, asynParamInt32, &edgeDetectModeId_);
-
-    // // =====================================================================
-    // // Enable test mode
-    // printf("Reading control register...\n");
-    // uint16_t ctrl_reg = readD16(V1290_CONTROL);
-    // printf("Control register = 0x%X\n", ctrl_reg);
-    // printf("Setting TEST_FIFO_ENABLE bit in control register\n");
-    // ctrl_reg |= TEST_FIFO_ENABLE;
-    // writeD16(V1290_CONTROL, ctrl_reg);
-    // printf("Read control register = 0x%X\n\n", readD16(V1290_CONTROL));
-    // // write test data into test registers
-    // printf("Writing 0x%X into test register...\n", 0xDEADBEEF);
-    // writeD32(V1290_TESTREG, 0xDEADBEEF);
-    // printf("Read test register = 0x%X\n\n", readD32(V1290_TESTREG));
-    // printf("Writing 0x%X into Dummy32 register...\n", 0xCAFEBABE);
-    // writeD32(V1290_DUMMY32, 0xCAFEBABE);
-    // printf("Read Dummy32 register = 0x%X\n\n", readD32(V1290_DUMMY32));
-    // printf("Writing 0x%X into Dummy16 register...\n", 0xCAFE);
-    // writeD16(V1290_DUMMY16, 0xCAFE);
-    // printf("Read Dummy16 register = 0x%X\n\n", readD16(V1290_DUMMY16));
-    // // Generate a software trigger
-    // printf("Generating software trigger...\n");
-    // writeD16(V1290_SW_TRIGGER, 1);
 }
 
-bool CaenV1290N::wait_micro_handshake(uint16_t mask) {
-    uint16_t timeout = 1000;
-    while ((readD16(Register::MicroHandshake) & mask) == 0 && timeout > 0) {
-	epicsThreadSleep(0.001);
-	timeout--;
-    }
-    printf("timeout = %d\n", timeout);
-    return (timeout > 0) ? true : false;
-};
-
-asynStatus CaenV1290N::readInt32(asynUser *pasynUser, epicsInt32 *value) {
+asynStatus CaenV1290N::readInt32(asynUser* pasynUser, epicsInt32* value) {
     const int function = pasynUser->reason;
     asynStatus asyn_status = asynSuccess;
 
-
     if (function == edgeDetectModeId_) {
-	if(!wait_micro_handshake(Handshake::WriteOk)) {
-	    printf("Timeout waiting for micro handshake write\n");
-	    return asynError;
-	}
-	printf("Write okay, continuing\n");
-	writeD16(Register::Micro, Opcode::ReadEdgeDetectionConfig);
-	printf("Write done\n");
-
-	if (!wait_micro_handshake(Handshake::ReadOk)) {
-	    printf("Timeout waiting for micro handshake read\n");
-	    return asynError;
-	}
-	printf("Read okay, continuing\n");
-	uint16_t edge_detect_mode = readD16(Register::Micro);
-	printf("Micro register = 0x%X\n", edge_detect_mode);
-	*value = edge_detect_mode;
+	if (!read_micro(Opcode::ReadEdgeDetectionMode, *value)) return asynError;
+    } else if (function == acquisitionModeId_) {
+	if (!read_micro(Opcode::ReadAcquisitionMode, *value)) return asynError;
     }
 
     return asyn_status;
@@ -138,7 +133,10 @@ asynStatus CaenV1290N::writeInt32(asynUser* pasynUser, epicsInt32 value) {
     asynStatus asyn_status = asynSuccess;
 
     if (function == edgeDetectModeId_) {
-	printf("writeInt32 called for edgeDetectModeId_\n");
+	if (!write_micro(Opcode::SetEdgeDetectionMode, value)) return asynError;
+    }
+    else if (function == acquisitionModeId_) {
+	if (!write_micro(value == 0 ? Opcode::SetContinuous : Opcode::SetTriggerMatch)) return asynError;
     }
 
     return asyn_status;

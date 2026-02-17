@@ -77,6 +77,7 @@ static const uint16_t ReadOk = (1 << 1);  // Data ready for Micro read
 namespace Opcode {
 static const uint16_t SetTriggerMatch = 0x0000;
 static const uint16_t SetContinuous = 0x0100;
-static const uint16_t ReadAcqMode = 0x0200;
-static const uint16_t ReadEdgeDetectionConfig = 0x2300;
+static const uint16_t ReadAcquisitionMode = 0x0200;
+static const uint16_t SetEdgeDetectionMode = 0x2200;
+static const uint16_t ReadEdgeDetectionMode = 0x2300;
 } // namespace Opcode
