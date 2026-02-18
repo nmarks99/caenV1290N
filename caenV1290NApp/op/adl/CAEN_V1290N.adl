@@ -5,8 +5,8 @@ file {
 }
 display {
 	object {
-		x=434
-		y=849
+		x=516
+		y=988
 		width=700
 		height=702
 	}
@@ -191,36 +191,6 @@ text {
 		clr=0
 	}
 	textix="CAEN V1290N TDC"
-}
-"text update" {
-	object {
-		x=255
-		y=165
-		width=100
-		height=20
-	}
-	monitor {
-		chan="namVME:V1290N:EnableBitsRBV.VAL"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=255
-		y=185
-		width=100
-		height=20
-	}
-	control {
-		chan="namVME:V1290N:EnableBits.VAL"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
 }
 byte {
 	object {
@@ -967,4 +937,91 @@ text {
 		clr=14
 	}
 	textix="Channels:"
+}
+"text entry" {
+	object {
+		x=485
+		y=165
+		width=75
+		height=20
+	}
+	control {
+		chan="namVME:V1290N:WindowWidth.VAL"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=485
+		y=195
+		width=75
+		height=20
+	}
+	control {
+		chan="namVME:V1290N:WindowOffset.VAL"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=305
+		y=165
+		width=175
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Window width:"
+	align="horiz. right"
+}
+text {
+	object {
+		x=305
+		y=195
+		width=175
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Window offset:"
+	align="horiz. right"
+}
+byte {
+	object {
+		x=570
+		y=270
+		width=25
+		height=320
+	}
+	monitor {
+		chan="namVME:V1290N:Status.VAL"
+		clr=16
+		bclr=4
+	}
+	direction="down"
+	sbit=0
+	ebit=15
+}
+"message button" {
+	object {
+		x=330
+		y=275
+		width=120
+		height=20
+	}
+	control {
+		chan="namVME:V1290N:DisableAll.PROC"
+		clr=14
+		bclr=51
+	}
+	label="Software Clear"
+	release_msg="1"
 }

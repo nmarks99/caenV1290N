@@ -17,10 +17,16 @@
 #define ACQUISITION_MODE_STR "ACQUISITION_MODE"
 #define EDGE_DETECT_MODE_STR "EDGE_DETECT_MODE"
 #define ENABLE_PATTERN_STR "ENABLE_PATTERN"
+#define WINDOW_WIDTH_STR "WINDOW_WIDTH"
+#define WINDOW_OFFSET_STR "WINDOW_OFFSET"
+#define SOFTWARE_CLEAR_STR "SOFTWARE_CLEAR"
+#define STATUS_STR "STATUS"
+#define DEV_PARAM_STR "DEV_PARAM"
 
 class CaenV1290N : public asynPortDriver {
   public:
     CaenV1290N(const char* portName, int baseAddress);
+    virtual void poll();
     virtual asynStatus writeInt32(asynUser* pasynUser, epicsInt32 value);
     virtual asynStatus readInt32(asynUser *pasynUser, epicsInt32 *value);
     virtual asynStatus readUInt32Digital(asynUser *pasynUser, epicsUInt32 *value, epicsUInt32 mask);
@@ -87,8 +93,18 @@ class CaenV1290N : public asynPortDriver {
     int acquisitionModeId_;
     int edgeDetectModeId_;
     int enablePatternId_;
+    int windowWidthId_;
+    int windowOffsetId_;
+    int softwareClearId_;
+    int statusId_;
+    int devParamId_;
 };
 
+
+static void poll_thread_C(void* pPvt) {
+    CaenV1290N* pCaenV1290N = (CaenV1290N*)pPvt;
+    pCaenV1290N->poll();
+}
 
 CaenV1290N::CaenV1290N(const char* portName, int baseAddress)
     : asynPortDriver(portName, MAX_CHANNELS, asynInt32Mask | asynFloat64Mask | asynUInt32DigitalMask | asynDrvUserMask,
@@ -118,6 +134,18 @@ CaenV1290N::CaenV1290N(const char* portName, int baseAddress)
     createParam(ACQUISITION_MODE_STR, asynParamInt32, &acquisitionModeId_);
     createParam(EDGE_DETECT_MODE_STR, asynParamInt32, &edgeDetectModeId_);
     createParam(ENABLE_PATTERN_STR, asynParamUInt32Digital, &enablePatternId_);
+    createParam(WINDOW_WIDTH_STR, asynParamInt32, &windowWidthId_);
+    createParam(WINDOW_OFFSET_STR, asynParamInt32, &windowOffsetId_);
+    createParam(SOFTWARE_CLEAR_STR, asynParamInt32, &softwareClearId_);
+    createParam(STATUS_STR, asynParamInt32, &statusId_);
+    createParam(DEV_PARAM_STR, asynParamInt32, &devParamId_);
+
+    // // For testing...
+    // writeD32(Register::TestReg, 0xDEADBEEF);
+
+    epicsThreadCreate("CaenV1290NPoller", epicsThreadPriorityLow,
+                    epicsThreadGetStackSize(epicsThreadStackMedium),
+                    (EPICSTHREADFUNC)poll_thread_C, this);
 }
 
 
@@ -146,6 +174,10 @@ asynStatus CaenV1290N::readInt32(asynUser* pasynUser, epicsInt32* value) {
 	if (!read_micro(Opcode::ReadAcquisitionMode, *value)) return asynError;
     }
 
+    else {
+	asynPortDriver::readInt32(pasynUser, value);
+    }
+
     return asynSuccess;
 }
 
@@ -156,9 +188,46 @@ asynStatus CaenV1290N::writeInt32(asynUser* pasynUser, epicsInt32 value) {
 	if (!write_micro(Opcode::SetEdgeDetectionMode, value)) return asynError;
     } else if (function == acquisitionModeId_) {
 	if (!write_micro(value == 0 ? Opcode::SetContinuous : Opcode::SetTriggerMatch)) return asynError;
+    } else if (function == windowWidthId_) {
+	if (!write_micro(Opcode::SetWindowWidth, value)) return asynError;
+    } else if (function == windowOffsetId_) {
+	if (!write_micro(Opcode::SetWindowOffset, value)) return asynError;
+    } else if (function == softwareClearId_) {
+	writeD16(Register::SwClear, 1);
+    }
+
+    // TODO: remote later. this is for testing
+    else if (function == devParamId_) {
+	printf("writeInt32 for devParamId_ called.\n");
+	printf("Reading Output buffer\n");
+	uint32_t data = readD32(Register::OutBuf);
     }
 
     return asynSuccess;
+}
+
+void CaenV1290N::poll() {
+    while (true) {
+
+	lock();
+
+	uint16_t status = readD16(Register::Status);
+	uint32_t testval = readD32(Register::TestReg);
+	printf("status = %d\n", status);
+	printf("test = %X\n", testval);
+	setIntegerParam(statusId_, status);
+	if (status & (1<<0)) {
+	    printf("Data ready!\n");
+	}
+	else {
+	    printf("No data\n");
+	}
+
+
+	callParamCallbacks();
+	unlock();
+	epicsThreadSleep(0.5);
+    }
 }
 
 extern "C" int initCaenV1290N(const char* portName, int baseAddress) {

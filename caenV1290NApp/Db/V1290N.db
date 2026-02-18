@@ -52,6 +52,7 @@ record(longout, "$(P)$(R):DisableAll") {
     field(VAL, 0)
     field(OUT, "$(P)$(R):EnableBits.VAL PP")
 }
+# TODO: these should max out at 2^16
 record(mbboDirect, "$(P)$(R):EnableBits") {
     field(DTYP, "asynUInt32Digital")
     field(NOBT, 16)
@@ -63,4 +64,37 @@ record(mbbiDirect, "$(P)$(R):EnableBitsRBV") {
     field(NOBT, 16)
     field(PINI, "YES")
     field(INP,  "@asynMask($(PORT),$(ADDR=0),0xFFFF,1)ENABLE_PATTERN")
+}
+
+record(longout, "$(P)$(R):WindowWidth") {
+    field(DTYP, "asynInt32")
+    field(EGU, "1/25 ns")
+    field(DRVH, 2088)
+    field(DRVL, 1)
+    field(OUT,  "@asyn($(PORT),$(ADDR=0))WINDOW_WIDTH")
+}
+record(longout, "$(P)$(R):WindowOffset") {
+    field(DTYP, "asynInt32")
+    field(EGU, "cycles (25ns)")
+    field(DRVH, 40)
+    field(DRVL, -2048)
+    field(OUT,  "@asyn($(PORT),$(ADDR=0))WINDOW_OFFSET")
+}
+
+record(longin, "$(P)$(R):Status") {
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT),$(ADDR=0))STATUS")
+    field(SCAN, "I/O Intr")
+}
+
+record(bo, "$(P)$(R):SoftwareClear") {
+    field(DTYP, "asynInt32")
+    field(VAL, 1)
+    field(OUT,  "@asyn($(PORT),$(ADDR=0))SOFTWARE_CLEAR")
+}
+
+record(bo, "$(P)test") {
+    field(DTYP, "asynInt32")
+    field(VAL, 1)
+    field(OUT,  "@asyn($(PORT),$(ADDR=0))DEV_PARAM")
 }
