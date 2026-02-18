@@ -52,15 +52,15 @@ record(longout, "$(P)$(R):DisableAll") {
     field(VAL, 0)
     field(OUT, "$(P)$(R):EnableBits.VAL PP")
 }
-record(longout, "$(P)$(R):EnableBits") {
-    field(DTYP, "asynInt32")
-    field(DRVH, 65535)
-    field(DRVL, 0)
-    field(OUT,  "@asyn($(PORT),$(ADDR=0))ENABLE_PATTERN")
+record(mbboDirect, "$(P)$(R):EnableBits") {
+    field(DTYP, "asynUInt32Digital")
+    field(NOBT, 16)
+    field(OUT,  "@asynMask($(PORT),$(ADDR=0),0xFFFF,1)ENABLE_PATTERN")
     field(FLNK, "$(P)$(R):EnableBitsRBV.PROC")
 }
-record(longin, "$(P)$(R):EnableBitsRBV") {
-    field(DTYP, "asynInt32")
+record(mbbiDirect, "$(P)$(R):EnableBitsRBV") {
+    field(DTYP, "asynUInt32Digital")
+    field(NOBT, 16)
     field(PINI, "YES")
-    field(INP,  "@asyn($(PORT),$(ADDR=0))ENABLE_PATTERN")
+    field(INP,  "@asynMask($(PORT),$(ADDR=0),0xFFFF,1)ENABLE_PATTERN")
 }

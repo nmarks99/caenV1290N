@@ -23,6 +23,8 @@ class CaenV1290N : public asynPortDriver {
     CaenV1290N(const char* portName, int baseAddress);
     virtual asynStatus writeInt32(asynUser* pasynUser, epicsInt32 value);
     virtual asynStatus readInt32(asynUser *pasynUser, epicsInt32 *value);
+    virtual asynStatus readUInt32Digital(asynUser *pasynUser, epicsUInt32 *value, epicsUInt32 mask);
+    virtual asynStatus writeUInt32Digital(asynUser *pasynUser, epicsUInt32 value, epicsUInt32 mask);
 
   private:
     volatile uint8_t* base;
@@ -89,8 +91,8 @@ class CaenV1290N : public asynPortDriver {
 
 
 CaenV1290N::CaenV1290N(const char* portName, int baseAddress)
-    : asynPortDriver(portName, MAX_CHANNELS, asynInt32Mask | asynFloat64Mask | asynDrvUserMask,
-                     asynInt32Mask | asynFloat64Mask, ASYN_MULTIDEVICE, ASYN_CANBLOCK, 0,
+    : asynPortDriver(portName, MAX_CHANNELS, asynInt32Mask | asynFloat64Mask | asynUInt32DigitalMask | asynDrvUserMask,
+                     asynInt32Mask | asynUInt32DigitalMask | asynFloat64Mask, ASYN_MULTIDEVICE, ASYN_CANBLOCK, 0,
                      0) // Default priority and stack size
 {
 
@@ -115,7 +117,24 @@ CaenV1290N::CaenV1290N(const char* portName, int baseAddress)
 
     createParam(ACQUISITION_MODE_STR, asynParamInt32, &acquisitionModeId_);
     createParam(EDGE_DETECT_MODE_STR, asynParamInt32, &edgeDetectModeId_);
-    createParam(ENABLE_PATTERN_STR, asynParamInt32, &enablePatternId_);
+    createParam(ENABLE_PATTERN_STR, asynParamUInt32Digital, &enablePatternId_);
+}
+
+
+asynStatus CaenV1290N::writeUInt32Digital(asynUser *pasynUser, epicsUInt32 value, epicsUInt32 mask) {
+    const int function = pasynUser->reason;
+    if (function == enablePatternId_) {
+	if (!write_micro(Opcode::WriteEnablePattern, value)) return asynError;
+    }
+    return asynSuccess;
+}
+
+asynStatus CaenV1290N::readUInt32Digital(asynUser *pasynUser, epicsUInt32 *value, epicsUInt32 mask) {
+    const int function = pasynUser->reason;
+    if (function == enablePatternId_) {
+	if (!read_micro(Opcode::ReadEnablePattern, *value)) return asynError;
+    }
+    return asynSuccess;
 }
 
 asynStatus CaenV1290N::readInt32(asynUser* pasynUser, epicsInt32* value) {
@@ -125,8 +144,6 @@ asynStatus CaenV1290N::readInt32(asynUser* pasynUser, epicsInt32* value) {
 	if (!read_micro(Opcode::ReadEdgeDetectionMode, *value)) return asynError;
     } else if (function == acquisitionModeId_) {
 	if (!read_micro(Opcode::ReadAcquisitionMode, *value)) return asynError;
-    } else if (function == enablePatternId_) {
-	if (!read_micro(Opcode::ReadEnablePattern, *value)) return asynError;
     }
 
     return asynSuccess;
@@ -139,8 +156,6 @@ asynStatus CaenV1290N::writeInt32(asynUser* pasynUser, epicsInt32 value) {
 	if (!write_micro(Opcode::SetEdgeDetectionMode, value)) return asynError;
     } else if (function == acquisitionModeId_) {
 	if (!write_micro(value == 0 ? Opcode::SetContinuous : Opcode::SetTriggerMatch)) return asynError;
-    } else if (function == enablePatternId_) {
-	if (!write_micro(Opcode::WriteEnablePattern, value)) return asynError;
     }
 
     return asynSuccess;
@@ -150,6 +165,7 @@ extern "C" int initCaenV1290N(const char* portName, int baseAddress) {
     new CaenV1290N(portName, baseAddress);
     return (asynSuccess);
 }
+
 
 static const iocshArg initArg0 = {"Port name", iocshArgString};
 static const iocshArg initArg1 = {"Base Address", iocshArgInt};
