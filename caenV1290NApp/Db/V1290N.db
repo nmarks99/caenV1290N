@@ -81,9 +81,9 @@ record(longout, "$(P)$(R):WindowOffset") {
     field(OUT,  "@asyn($(PORT),$(ADDR=0))WINDOW_OFFSET")
 }
 
-record(longin, "$(P)$(R):Status") {
-    field(DTYP, "asynInt32")
-    field(INP,  "@asyn($(PORT),$(ADDR=0))STATUS")
+record(mbbiDirect, "$(P)$(R):Status") {
+    field(DTYP, "asynUInt32Digital")
+    field(INP,  "@asynMask($(PORT),$(ADDR=0),0xFFFF,1)STATUS")
     field(SCAN, "I/O Intr")
 }
 
