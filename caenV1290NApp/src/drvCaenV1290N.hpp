@@ -1,9 +1,10 @@
 #pragma once
 #include <asynPortDriver.h>
 #include <epicsMMIO.h>
+#include <devLib.h>
 #include <stdint.h>
 
-#include "V1290N.hpp"
+// #include "V1290N.hpp"
 
 // String names for asyn parameters
 #define ACQUISITION_MODE_STR "ACQUISITION_MODE"
@@ -27,59 +28,65 @@ class CaenV1290N : public asynPortDriver {
   private:
     volatile uint8_t* base;
 
-    bool wait_micro_handshake(uint16_t mask) {
-        uint16_t timeout = 1000;
-        while ((readD16(Register::MicroHandshake) & mask) == 0 && timeout > 0) {
-            epicsThreadSleep(0.0001);
-            timeout--;
-        }
-        return (timeout > 0) ? true : false;
-    };
+    /// \brief Continually tests microcontroller handshake until true, or timeout.
+    ///
+    /// \param mask The mask to test handshake register with.
+    /// \param timeout Timeout in milliseconds.
+    /// \return True on success, false on error or timeout/
+    bool wait_micro_handshake(uint16_t mask, uint16_t timeout=1000);
 
-    bool write_micro(uint16_t opcode, uint16_t val) {
-        if (!wait_micro_handshake(Handshake::WriteOk)) {
-            printf("Timeout waiting for micro handshake write\n");
-            return false;
-        }
-        writeD16(Register::Micro, opcode);
+    /// \brief Writes given opcode, followed by given value to the micro register.
+    ///
+    /// \param opcode The opcode to write.
+    /// \param val The value to write immediately after the opcode.
+    /// \return True on success, false on error or timeout.
+    bool write_micro(uint16_t opcode, uint16_t val);
 
-        if (!wait_micro_handshake(Handshake::WriteOk)) {
-            printf("Timeout waiting for micro handshake write\n");
-            return false;
-        }
-        writeD16(Register::Micro, val);
-        return true;
+    /// \brief Writes given opcode to the micro register.
+    ///
+    /// \param opcode The opcode to write.
+    /// \return True on success, false on error or timeout.
+    bool write_micro(uint16_t opcode);
+
+    /// \brief Reads data stored in micro register after writing given opcode
+    ///
+    /// \param opcode The opcode to write.
+    /// \param value Reference to the value to store the data in.
+    /// \return True on success, false on error or timeout.
+    bool read_micro(uint16_t opcode, uint16_t& value);
+
+
+    /// \brief Performs a safe D16 VME bus write of the value to the offset
+    /// \param offset The offset from the base address to write to
+    /// \param value The value to write
+    /// \return True on success, false on error
+    bool writeD16(uint16_t offset, uint16_t value) {
+	return !devWriteProbe(sizeof(uint16_t), base+offset, &value);
     }
 
-    bool write_micro(uint16_t opcode) {
-        if (!wait_micro_handshake(Handshake::WriteOk)) {
-            printf("Timeout waiting for micro handshake write\n");
-            return false;
-        }
-        writeD16(Register::Micro, opcode);
-        return true;
+    /// \brief Performs a safe D16 VME bus read of the offset location
+    /// \param offset The offset from the base address to write to
+    /// \param value The value to store the read data
+    /// \return True on success, false on error
+    bool readD16(uint16_t offset, uint16_t& value) {
+	return !devReadProbe(sizeof(uint16_t), base+offset, &value);
     }
 
-    template <typename T>
-    bool read_micro(uint16_t opcode, T& retval) {
-        if (!wait_micro_handshake(Handshake::WriteOk)) {
-            printf("Timeout waiting for micro handshake write\n");
-            return false;
-        }
-        writeD16(Register::Micro, opcode);
-
-        if (!wait_micro_handshake(Handshake::ReadOk)) {
-            printf("Timeout waiting for micro handshake read\n");
-            return false;
-        }
-        retval = readD16(Register::Micro);
-        return true;
+    /// \brief Performs a safe D32 VME bus write of the value to the offset
+    /// \param offset The offset from the base address to write to
+    /// \param value The value to write
+    /// \return True on success, false on error
+    bool writeD32(uint32_t offset, uint32_t value) {
+	return !devWriteProbe(sizeof(uint32_t), base+offset, &value);
     }
 
-    void writeD16(uint16_t offset, uint16_t value) { nat_iowrite16(base + offset, value); }
-    uint16_t readD16(uint16_t offset) { return nat_ioread16(base + offset); }
-    void writeD32(uint32_t offset, uint32_t value) { nat_iowrite32(base + offset, value); }
-    uint32_t readD32(uint32_t offset) { return nat_ioread32(base + offset); }
+    /// \brief Performs a safe D32 VME bus read of the offset location
+    /// \param offset The offset from the base address to write to
+    /// \param value The value to store the read data
+    /// \return True on success, false on error
+    bool readD32(uint32_t offset, uint32_t& value) {
+	return !devReadProbe(sizeof(uint32_t), base+offset, &value);
+    }
 
   protected:
     int acquisitionModeId_;

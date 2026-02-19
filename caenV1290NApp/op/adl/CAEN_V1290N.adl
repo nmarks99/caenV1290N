@@ -5,8 +5,8 @@ file {
 }
 display {
 	object {
-		x=516
-		y=988
+		x=667
+		y=867
 		width=700
 		height=702
 	}
@@ -1023,5 +1023,20 @@ byte {
 		bclr=51
 	}
 	label="Software Clear"
+	release_msg="1"
+}
+"message button" {
+	object {
+		x=310
+		y=640
+		width=120
+		height=20
+	}
+	control {
+		chan="namVME:test.PROC"
+		clr=14
+		bclr=51
+	}
+	label="dev test"
 	release_msg="1"
 }

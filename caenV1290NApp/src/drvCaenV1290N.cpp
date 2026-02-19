@@ -30,10 +30,11 @@ CaenV1290N::CaenV1290N(const char* portName, int baseAddress)
     base = (volatile uint8_t*)ptr;
 
     // Writing any value to the Software Clear Register resets logic and clears buffers.
-    writeD16(Register::SwClear, 1);
+    // writeD16(Register::SwClear, 1);
 
     // Read the Firmware Revision Register
-    uint16_t rev = readD16(Register::FirmwareRev);
+    uint16_t rev;
+    readD16(Register::FirmwareRev, rev);
     int major = (rev >> 4) & 0x0F;
     int minor = rev & 0x0F;
     printf("V1290 Firmware Revision: %d.%d (Raw: 0x%04X)\n\n", major, minor, rev);
@@ -49,11 +50,62 @@ CaenV1290N::CaenV1290N(const char* portName, int baseAddress)
 
     // // For testing...
     // writeD32(Register::TestReg, 0xDEADBEEF);
-    printf("here\n");
 
     epicsThreadCreate("CaenV1290NPoller", epicsThreadPriorityLow,
                     epicsThreadGetStackSize(epicsThreadStackMedium),
                     (EPICSTHREADFUNC)poll_thread_C, this);
+}
+
+bool CaenV1290N::wait_micro_handshake(uint16_t mask, uint16_t timeout) {
+    while (true) {
+	uint16_t hs;
+	if (!readD16(Register::MicroHandshake, hs)) { return false; }
+	if ( (hs & mask) == 0 && (timeout > 0) ) {
+	    epicsThreadSleep(0.001);
+	    timeout--;
+	} else {
+	    break;
+	}
+    }
+    return (timeout > 0) ? true : false;
+};
+
+bool CaenV1290N::write_micro(uint16_t opcode, uint16_t val) {
+    if (!wait_micro_handshake(Handshake::WriteOk)) {
+	printf("Timeout waiting for micro handshake write\n");
+	return false;
+    }
+    writeD16(Register::Micro, opcode);
+
+    if (!wait_micro_handshake(Handshake::WriteOk)) {
+	printf("Timeout waiting for micro handshake write\n");
+	return false;
+    }
+    writeD16(Register::Micro, val);
+    return true;
+}
+
+bool CaenV1290N::write_micro(uint16_t opcode) {
+    if (!wait_micro_handshake(Handshake::WriteOk)) {
+	printf("Timeout waiting for micro handshake write\n");
+	return false;
+    }
+    writeD16(Register::Micro, opcode);
+    return true;
+}
+
+bool CaenV1290N::read_micro(uint16_t opcode, uint16_t& value) {
+    if (!wait_micro_handshake(Handshake::WriteOk)) {
+	printf("Timeout waiting for micro handshake write\n");
+	return false;
+    }
+    writeD16(Register::Micro, opcode);
+
+    if (!wait_micro_handshake(Handshake::ReadOk)) {
+	printf("Timeout waiting for micro handshake read\n");
+	return false;
+    }
+    return readD16(Register::Micro, value);
 }
 
 
@@ -67,8 +119,10 @@ asynStatus CaenV1290N::writeUInt32Digital(asynUser* pasynUser, epicsUInt32 value
 
 asynStatus CaenV1290N::readUInt32Digital(asynUser* pasynUser, epicsUInt32* value, epicsUInt32 mask) {
     const int function = pasynUser->reason;
+    uint16_t v;
     if (function == enablePatternId_) {
-	if (!read_micro(Opcode::ReadEnablePattern, *value)) return asynError;
+	if (!read_micro(Opcode::ReadEnablePattern, v)) return asynError;
+	*value = v;
     }
 
     else {
@@ -81,10 +135,13 @@ asynStatus CaenV1290N::readUInt32Digital(asynUser* pasynUser, epicsUInt32* value
 asynStatus CaenV1290N::readInt32(asynUser* pasynUser, epicsInt32* value) {
     const int function = pasynUser->reason;
 
+    uint16_t v = 0;
     if (function == edgeDetectModeId_) {
-	if (!read_micro(Opcode::ReadEdgeDetectionMode, *value)) return asynError;
+	if (!read_micro(Opcode::ReadEdgeDetectionMode, v)) return asynError;
+	*value = v;
     } else if (function == acquisitionModeId_) {
-	if (!read_micro(Opcode::ReadAcquisitionMode, *value)) return asynError;
+	if (!read_micro(Opcode::ReadAcquisitionMode, v)) return asynError;
+	*value = v;
     }
 
     else {
@@ -112,8 +169,20 @@ asynStatus CaenV1290N::writeInt32(asynUser* pasynUser, epicsInt32 value) {
     // TODO: remote later. this is for testing
     else if (function == devParamId_) {
 	printf("writeInt32 for devParamId_ called.\n");
-	printf("Reading Output buffer\n");
-	uint32_t data = readD32(Register::OutBuf);
+
+	uint32_t data;
+	if (readD32(Register::OutBuf, data)) {
+	    printf("data = %X\n", data);
+	} else {
+	    printf("Error reading output buffer register\n");
+	}
+
+	uint32_t testval;
+	if (readD32(Register::TestReg, testval)) {
+	    printf("test = %X\n", testval);
+	} else {
+	    printf("Error reading Test register\n");
+	}
     }
 
     return asynSuccess;
@@ -124,16 +193,12 @@ void CaenV1290N::poll() {
 
 	lock();
 
-	uint16_t status = readD16(Register::Status);
-	uint32_t testval = readD32(Register::TestReg);
-	printf("status = %d\n", status);
-	printf("test = %X\n", testval);
+	uint16_t status;
+	readD16(Register::Status, status);
+	// printf("status = %d\n", status);
 	setUIntDigitalParam(statusId_, status, 0xFFFF);
 	if (status & (1<<0)) {
 	    printf("Data ready!\n");
-	}
-	else {
-	    printf("No data\n");
 	}
 
 	callParamCallbacks();
