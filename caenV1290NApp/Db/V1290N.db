@@ -83,8 +83,22 @@ record(longout, "$(P)$(R):WindowOffset") {
 
 record(mbbiDirect, "$(P)$(R):Status") {
     field(DTYP, "asynUInt32Digital")
+    field(NOBT, 16)
     field(INP,  "@asynMask($(PORT),$(ADDR=0),0xFFFF,1)STATUS")
     field(SCAN, "I/O Intr")
+}
+
+record(mbboDirect, "$(P)$(R):Control") {
+    field(DTYP, "asynUInt32Digital")
+    field(NOBT, 16)
+    field(OUT,  "@asynMask($(PORT),$(ADDR=0),0xFFFF,1)CONTROL")
+    field(FLNK, "$(P)$(R):ControlRBV.PROC")
+}
+record(mbbiDirect, "$(P)$(R):ControlRBV") {
+    field(DTYP, "asynUInt32Digital")
+    field(NOBT, 16)
+    field(PINI, "YES")
+    field(INP,  "@asynMask($(PORT),$(ADDR=0),0xFFFF,1)CONTROL")
 }
 
 record(bo, "$(P)$(R):SoftwareClear") {
@@ -93,7 +107,20 @@ record(bo, "$(P)$(R):SoftwareClear") {
     field(OUT,  "@asyn($(PORT),$(ADDR=0))SOFTWARE_CLEAR")
 }
 
-record(bo, "$(P)test") {
+record(longout, "$(P)$(R):TestRegister") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR=0))TESTREG")
+    field(FLNK, "$(P)$(R):TestRegisterRBV.PROC")
+}
+record(longin, "$(P)$(R):TestRegisterRBV") {
+    field(DTYP, "asynInt32")
+    field(PINI, "YES")
+    field(INP,  "@asyn($(PORT),$(ADDR=0))TESTREG")
+}
+
+
+
+record(bo, "$(P)$(R):test") {
     field(DTYP, "asynInt32")
     field(VAL, 1)
     field(OUT,  "@asyn($(PORT),$(ADDR=0))DEV_PARAM")

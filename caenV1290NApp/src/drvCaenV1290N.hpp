@@ -14,6 +14,8 @@
 #define WINDOW_OFFSET_STR "WINDOW_OFFSET"
 #define SOFTWARE_CLEAR_STR "SOFTWARE_CLEAR"
 #define STATUS_STR "STATUS"
+#define CONTROL_STR "CONTROL"
+#define TESTREG_STR "TESTREG"
 #define DEV_PARAM_STR "DEV_PARAM"
 
 class CaenV1290N : public asynPortDriver {
@@ -96,5 +98,7 @@ class CaenV1290N : public asynPortDriver {
     int windowOffsetId_;
     int softwareClearId_;
     int statusId_;
+    int controlId_;
+    int testregId_;
     int devParamId_;
 };
