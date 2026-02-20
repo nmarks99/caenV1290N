@@ -4,7 +4,10 @@
 #include <devLib.h>
 #include <stdint.h>
 
-// #include "V1290N.hpp"
+// #warning "vxWorks dependent for testing"
+// #include <vxWorks.h>
+// #include <vme.h>
+// #include <vxLib.h>
 
 // String names for asyn parameters
 #define ACQUISITION_MODE_STR "ACQUISITION_MODE"
@@ -16,6 +19,8 @@
 #define STATUS_STR "STATUS"
 #define CONTROL_STR "CONTROL"
 #define TESTREG_STR "TESTREG"
+#define DUMMY32_STR "DUMMY32"
+#define DUMMY16_STR "DUMMY16"
 #define DEV_PARAM_STR "DEV_PARAM"
 
 class CaenV1290N : public asynPortDriver {
@@ -90,6 +95,12 @@ class CaenV1290N : public asynPortDriver {
 	return !devReadProbe(sizeof(uint32_t), base+offset, &value);
     }
 
+    // // devWriteProbe is the OSI abstraction on top of vxMemProbe, so as expected,
+    // // this appears to give the same result as CaenV1290N::writeD16
+    // long vx_writeD16(uint32_t offset, uint32_t value) {
+	// return vxMemProbe( (char *)(base+offset), VX_WRITE, 2, (char *)(&value));
+    // }
+
   protected:
     int acquisitionModeId_;
     int edgeDetectModeId_;
@@ -100,5 +111,7 @@ class CaenV1290N : public asynPortDriver {
     int statusId_;
     int controlId_;
     int testregId_;
+    int dummy16Id_;
+    int dummy32Id_;
     int devParamId_;
 };

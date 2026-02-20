@@ -5,8 +5,8 @@ file {
 }
 display {
 	object {
-		x=296
-		y=935
+		x=318
+		y=300
 		width=971
 		height=702
 	}
@@ -941,7 +941,7 @@ text {
 "text entry" {
 	object {
 		x=540
-		y=145
+		y=150
 		width=75
 		height=20
 	}
@@ -956,7 +956,7 @@ text {
 "text entry" {
 	object {
 		x=540
-		y=175
+		y=180
 		width=75
 		height=20
 	}
@@ -971,7 +971,7 @@ text {
 text {
 	object {
 		x=360
-		y=145
+		y=150
 		width=175
 		height=20
 	}
@@ -984,7 +984,7 @@ text {
 text {
 	object {
 		x=360
-		y=175
+		y=180
 		width=175
 		height=20
 	}
@@ -996,8 +996,8 @@ text {
 }
 byte {
 	object {
-		x=545
-		y=255
+		x=495
+		y=315
 		width=25
 		height=320
 	}
@@ -1027,8 +1027,8 @@ byte {
 }
 "message button" {
 	object {
-		x=310
-		y=640
+		x=830
+		y=45
 		width=120
 		height=20
 	}
@@ -1042,8 +1042,8 @@ byte {
 }
 text {
 	object {
-		x=470
-		y=230
+		x=420
+		y=290
 		width=100
 		height=20
 	}
@@ -1055,8 +1055,8 @@ text {
 }
 byte {
 	object {
-		x=885
-		y=255
+		x=794
+		y=315
 		width=25
 		height=320
 	}
@@ -1071,8 +1071,8 @@ byte {
 }
 text {
 	object {
-		x=810
-		y=230
+		x=719
+		y=290
 		width=100
 		height=20
 	}
@@ -1084,22 +1084,22 @@ text {
 }
 text {
 	object {
-		x=50
-		y=590
+		x=395
+		y=245
 		width=100
 		height=20
 	}
 	"basic attribute" {
 		clr=14
 	}
-	textix="Tesreg:"
+	textix="TestReg:"
 	align="horiz. right"
 }
 "text entry" {
 	object {
-		x=155
-		y=590
-		width=75
+		x=500
+		y=245
+		width=100
 		height=20
 	}
 	control {
@@ -1107,13 +1107,14 @@ text {
 		clr=14
 		bclr=51
 	}
+	format="hexadecimal"
 	limits {
 	}
 }
 text {
 	object {
-		x=780
-		y=255
+		x=689
+		y=315
 		width=100
 		height=20
 	}
@@ -1125,8 +1126,8 @@ text {
 }
 text {
 	object {
-		x=780
-		y=275
+		x=689
+		y=335
 		width=100
 		height=20
 	}
@@ -1138,8 +1139,8 @@ text {
 }
 text {
 	object {
-		x=780
-		y=295
+		x=689
+		y=355
 		width=100
 		height=20
 	}
@@ -1151,8 +1152,8 @@ text {
 }
 text {
 	object {
-		x=730
-		y=315
+		x=639
+		y=375
 		width=150
 		height=20
 	}
@@ -1164,8 +1165,8 @@ text {
 }
 text {
 	object {
-		x=780
-		y=335
+		x=689
+		y=395
 		width=100
 		height=20
 	}
@@ -1177,8 +1178,8 @@ text {
 }
 text {
 	object {
-		x=730
-		y=355
+		x=639
+		y=415
 		width=150
 		height=20
 	}
@@ -1190,8 +1191,8 @@ text {
 }
 text {
 	object {
-		x=680
-		y=375
+		x=589
+		y=435
 		width=200
 		height=20
 	}
@@ -1203,8 +1204,8 @@ text {
 }
 text {
 	object {
-		x=630
-		y=395
+		x=538
+		y=455
 		width=250
 		height=20
 	}
@@ -1216,8 +1217,8 @@ text {
 }
 text {
 	object {
-		x=680
-		y=415
+		x=589
+		y=475
 		width=200
 		height=20
 	}
@@ -1229,8 +1230,8 @@ text {
 }
 text {
 	object {
-		x=630
-		y=435
+		x=539
+		y=495
 		width=250
 		height=20
 	}
@@ -1242,8 +1243,8 @@ text {
 }
 text {
 	object {
-		x=630
-		y=495
+		x=539
+		y=555
 		width=250
 		height=20
 	}
@@ -1255,8 +1256,8 @@ text {
 }
 text {
 	object {
-		x=340
-		y=255
+		x=290
+		y=315
 		width=200
 		height=20
 	}
@@ -1268,8 +1269,8 @@ text {
 }
 text {
 	object {
-		x=340
-		y=275
+		x=290
+		y=335
 		width=200
 		height=20
 	}
@@ -1281,8 +1282,8 @@ text {
 }
 text {
 	object {
-		x=340
-		y=295
+		x=290
+		y=355
 		width=200
 		height=20
 	}
@@ -1294,8 +1295,8 @@ text {
 }
 text {
 	object {
-		x=340
-		y=315
+		x=290
+		y=375
 		width=200
 		height=20
 	}
@@ -1307,8 +1308,8 @@ text {
 }
 text {
 	object {
-		x=340
-		y=335
+		x=290
+		y=395
 		width=200
 		height=20
 	}
@@ -1320,8 +1321,8 @@ text {
 }
 text {
 	object {
-		x=340
-		y=355
+		x=290
+		y=415
 		width=200
 		height=20
 	}
@@ -1333,8 +1334,8 @@ text {
 }
 text {
 	object {
-		x=340
-		y=375
+		x=290
+		y=435
 		width=200
 		height=20
 	}
@@ -1346,8 +1347,8 @@ text {
 }
 text {
 	object {
-		x=340
-		y=395
+		x=290
+		y=455
 		width=200
 		height=20
 	}
@@ -1359,8 +1360,8 @@ text {
 }
 text {
 	object {
-		x=340
-		y=415
+		x=290
+		y=475
 		width=200
 		height=20
 	}
@@ -1372,8 +1373,8 @@ text {
 }
 text {
 	object {
-		x=340
-		y=435
+		x=290
+		y=495
 		width=200
 		height=20
 	}
@@ -1385,8 +1386,8 @@ text {
 }
 text {
 	object {
-		x=340
-		y=455
+		x=290
+		y=515
 		width=200
 		height=20
 	}
@@ -1398,8 +1399,8 @@ text {
 }
 text {
 	object {
-		x=340
-		y=475
+		x=290
+		y=535
 		width=200
 		height=20
 	}
@@ -1411,8 +1412,8 @@ text {
 }
 text {
 	object {
-		x=340
-		y=495
+		x=290
+		y=555
 		width=200
 		height=20
 	}
@@ -1424,8 +1425,8 @@ text {
 }
 text {
 	object {
-		x=340
-		y=515
+		x=290
+		y=575
 		width=200
 		height=20
 	}
@@ -1437,8 +1438,8 @@ text {
 }
 text {
 	object {
-		x=340
-		y=535
+		x=290
+		y=595
 		width=200
 		height=20
 	}
@@ -1450,8 +1451,8 @@ text {
 }
 text {
 	object {
-		x=340
-		y=555
+		x=290
+		y=615
 		width=200
 		height=20
 	}
@@ -1463,13 +1464,103 @@ text {
 }
 "text update" {
 	object {
-		x=235
-		y=590
+		x=500
+		y=225
 		width=100
-		height=20
+		height=15
 	}
 	monitor {
 		chan="namVME:V1290N:TestRegisterRBV.VAL"
+		clr=54
+		bclr=4
+	}
+	format="hexadecimal"
+	limits {
+	}
+}
+text {
+	object {
+		x=735
+		y=100
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Dummy16:"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=845
+		y=100
+		width=100
+		height=20
+	}
+	control {
+		chan="namVME:V1290N:Dummy16.VAL"
+		clr=14
+		bclr=51
+	}
+	format="hexadecimal"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=845
+		y=80
+		width=100
+		height=15
+	}
+	monitor {
+		chan="namVME:V1290N:Dummy16RBV.VAL"
+		clr=54
+		bclr=4
+	}
+	format="hexadecimal"
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=845
+		y=155
+		width=100
+		height=20
+	}
+	control {
+		chan="namVME:V1290N:Dummy32.VAL"
+		clr=14
+		bclr=51
+	}
+	format="hexadecimal"
+	limits {
+	}
+}
+text {
+	object {
+		x=735
+		y=155
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Dummy32:"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=845
+		y=135
+		width=100
+		height=15
+	}
+	monitor {
+		chan="namVME:V1290N:Dummy32RBV.VAL"
 		clr=54
 		bclr=4
 	}

@@ -118,6 +118,27 @@ record(longin, "$(P)$(R):TestRegisterRBV") {
     field(INP,  "@asyn($(PORT),$(ADDR=0))TESTREG")
 }
 
+record(longout, "$(P)$(R):Dummy16") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR=0))DUMMY16")
+    field(FLNK, "$(P)$(R):Dummy16RegisterRBV.PROC")
+}
+record(longin, "$(P)$(R):Dummy16RBV") {
+    field(DTYP, "asynInt32")
+    field(SCAN, "I/O Intr")
+    field(INP,  "@asyn($(PORT),$(ADDR=0))DUMMY16")
+}
+
+record(longout, "$(P)$(R):Dummy32") {
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT),$(ADDR=0))DUMMY32")
+    field(FLNK, "$(P)$(R):Dummy32RegisterRBV.PROC")
+}
+record(longin, "$(P)$(R):Dummy32RBV") {
+    field(DTYP, "asynInt32")
+    field(SCAN, "I/O Intr")
+    field(INP,  "@asyn($(PORT),$(ADDR=0))DUMMY32")
+}
 
 
 record(bo, "$(P)$(R):test") {
