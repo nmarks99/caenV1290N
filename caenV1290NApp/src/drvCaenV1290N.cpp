@@ -21,18 +21,18 @@ CaenV1290N::CaenV1290N(const char* portName, int baseAddress)
 
     // initialize
     volatile void* ptr;
-    // const size_t EXTENT = 0x10000; // ???
-    const size_t EXTENT = 0x1000000;
-    printf("using extent = 0x%lX\n", EXTENT);
-    if (devRegisterAddress("CAEN_V1290N", atVMEA32, baseAddress, EXTENT, &ptr)) {
-        printf("ERROR: devRegisterAddress failed. Cannot initialize board.\n");
-        return;
+    const size_t EXTENT = 0x10000;
+    printf("Using A24\n");
+    if (devRegisterAddress("CAEN_V1290N", atVMEA24, baseAddress, EXTENT, &ptr)) {
+	printf("ERROR: devRegisterAddress failed. Cannot initialize board.\n");
+	return;
     }
+    // if (devRegisterAddress("CAEN_V1290N", atVMEA32, baseAddress, EXTENT, &ptr)) {
+        // printf("ERROR: devRegisterAddress failed. Cannot initialize board.\n");
+        // return;
+    // }
 
     base = (volatile uint8_t*)ptr;
-
-    // Writing any value to the Software Clear Register resets logic and clears buffers.
-    // writeD16(Register::SwClear, 1);
 
     // Read the Firmware Revision Register
     uint16_t rev;
@@ -46,9 +46,12 @@ CaenV1290N::CaenV1290N(const char* portName, int baseAddress)
     createParam(ENABLE_PATTERN_STR, asynParamUInt32Digital, &enablePatternId_);
     createParam(STATUS_STR, asynParamUInt32Digital, &statusId_);
     createParam(CONTROL_STR, asynParamUInt32Digital, &controlId_);
+    createParam(EVENTS_STORED_STR, asynParamInt32, &eventsStoredId_);
     createParam(WINDOW_WIDTH_STR, asynParamInt32, &windowWidthId_);
     createParam(WINDOW_OFFSET_STR, asynParamInt32, &windowOffsetId_);
     createParam(SOFTWARE_CLEAR_STR, asynParamInt32, &softwareClearId_);
+    createParam(SOFTWARE_TRIGGER_STR, asynParamInt32, &softwareTriggerId_);
+    createParam(TDC_HEADER_TRAILER_STR, asynParamInt32, &tdcHeaderTrailerId_);
     createParam(TESTREG_STR, asynParamInt32, &testregId_);
     createParam(DUMMY16_STR, asynParamInt32, &dummy16Id_);
     createParam(DUMMY32_STR, asynParamInt32, &dummy32Id_);
@@ -162,6 +165,9 @@ asynStatus CaenV1290N::readInt32(asynUser* pasynUser, epicsInt32* value) {
     } else if (function == acquisitionModeId_) {
 	if (!read_micro(Opcode::ReadAcquisitionMode, v16)) { asyn_status = asynError; };
 	*value = v16;
+    } else if (function == tdcHeaderTrailerId_) {
+	if (!read_micro(Opcode::TDCHeaderTrailerStatus, v16)) { asyn_status = asynError; };
+	*value = v16;
     } else if (function == testregId_) {
 	uint32_t v32 = 0;
 	if (!readD32(Register::TestReg, v32)) {
@@ -192,6 +198,8 @@ asynStatus CaenV1290N::writeInt32(asynUser* pasynUser, epicsInt32 value) {
 	if (!write_micro(Opcode::SetWindowWidth, value)) { asyn_status = asynError; }
     } else if (function == windowOffsetId_) {
 	if (!write_micro(Opcode::SetWindowOffset, value)) { asyn_status = asynError; }
+    } else if (function == tdcHeaderTrailerId_) {
+	if (!write_micro(value == 0 ? Opcode::DisableTDCHeaderTrailer : Opcode::EnableTDCHeaderTrailer)) { asyn_status = asynError; }
     } else if (function == softwareClearId_) {
 	printf("Writing %d to software clear register\n", value);
 	// this "works"
@@ -205,6 +213,11 @@ asynStatus CaenV1290N::writeInt32(asynUser* pasynUser, epicsInt32 value) {
 	// this "works" but returns an error code
 	if (!writeD16(Register::SwClear, value)) {
 	    printf("Write to software clear register failed\n");
+	    asyn_status = asynError;
+	}
+    } else if (function == softwareTriggerId_) {
+	if (!writeD16(Register::SwTrigger, value)) {
+	    printf("Write to software trigger register failed\n");
 	    asyn_status = asynError;
 	}
     } else if (function == dummy16Id_) {
@@ -238,6 +251,8 @@ asynStatus CaenV1290N::writeInt32(asynUser* pasynUser, epicsInt32 value) {
 	if (readD32(Register::OutBuf, data)) {
 	    printf("data = %X\n", data);
 	} else {
+	    // this unprotected bus write will crash IOC at the moment
+	    // data = *(volatile uint32_t*)(base+Register::OutBuf);
 	    printf("data = %X\n", data);
 	    printf("Error reading output buffer register\n");
 	    asyn_status = asynError;
@@ -261,27 +276,35 @@ asynStatus CaenV1290N::writeInt32(asynUser* pasynUser, epicsInt32 value) {
 
 void CaenV1290N::poll() {
     while (true) {
+	uint16_t val16 = 0;
+	uint32_t val32 = 0;
 
 	lock();
 
 	// Read status register
-	uint16_t status = 0;
-	if (readD16(Register::Status, status)) {
-	    setUIntDigitalParam(statusId_, status, 0xFFFF);
+	val16=0;
+	if (readD16(Register::Status, val16)) {
+	    setUIntDigitalParam(statusId_, val16, 0xFFFF);
 	}
 
 	// read dummy registers for testing
-	uint16_t dummy16 = 0;
-	if (!readD16(Register::Dummy16, dummy16)) {
+	val16=0;
+	if (!readD16(Register::Dummy16, val16)) {
 	    printf("Failure reading dummy16\n");
 	}
-	setIntegerParam(dummy16Id_, dummy16);
+	setIntegerParam(dummy16Id_, val16);
 
-	uint32_t dummy32 = 0;
-	if (!readD32(Register::Dummy32, dummy32)) {
+	val32=0;
+	if (!readD32(Register::Dummy32, val32)) {
 	    printf("Failure reading dummy32\n");
 	}
-	setIntegerParam(dummy32Id_, dummy32);
+	setIntegerParam(dummy32Id_, val32);
+
+	val16=0;
+	if (!readD16(Register::EventStored, val16)) {
+	    printf("Failure reading EventStored\n");
+	}
+	setIntegerParam(eventsStoredId_, val16);
 
 	callParamCallbacks();
 	unlock();

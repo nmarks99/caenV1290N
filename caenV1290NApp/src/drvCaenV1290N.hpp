@@ -16,11 +16,14 @@
 #define WINDOW_WIDTH_STR "WINDOW_WIDTH"
 #define WINDOW_OFFSET_STR "WINDOW_OFFSET"
 #define SOFTWARE_CLEAR_STR "SOFTWARE_CLEAR"
+#define SOFTWARE_TRIGGER_STR "SOFTWARE_TRIGGER"
+#define TDC_HEADER_TRAILER_STR "TDC_HEADER_TRAILER"
 #define STATUS_STR "STATUS"
 #define CONTROL_STR "CONTROL"
 #define TESTREG_STR "TESTREG"
 #define DUMMY32_STR "DUMMY32"
 #define DUMMY16_STR "DUMMY16"
+#define EVENTS_STORED_STR "EVENTS_STORED"
 #define DEV_PARAM_STR "DEV_PARAM"
 
 class CaenV1290N : public asynPortDriver {
@@ -108,7 +111,10 @@ class CaenV1290N : public asynPortDriver {
     int windowWidthId_;
     int windowOffsetId_;
     int softwareClearId_;
+    int softwareTriggerId_;
+    int tdcHeaderTrailerId_;
     int statusId_;
+    int eventsStoredId_;
     int controlId_;
     int testregId_;
     int dummy16Id_;
