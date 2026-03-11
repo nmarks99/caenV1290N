@@ -1,7 +1,7 @@
 #pragma once
 #include <asynPortDriver.h>
-#include <epicsMMIO.h>
 #include <devLib.h>
+#include <epicsMMIO.h>
 #include <stdint.h>
 
 // #warning "vxWorks dependent for testing"
@@ -36,6 +36,7 @@ class CaenV1290N : public asynPortDriver {
     virtual asynStatus writeUInt32Digital(asynUser* pasynUser, epicsUInt32 value, epicsUInt32 mask);
 
   private:
+    // this is a "trick" since adding an offset like 0x1000 to a pointer to uint8_t moves 4 bytes
     volatile uint8_t* base;
 
     /// \brief Continually tests microcontroller handshake until true, or timeout.
@@ -43,7 +44,7 @@ class CaenV1290N : public asynPortDriver {
     /// \param mask The mask to test handshake register with.
     /// \param timeout Timeout in milliseconds.
     /// \return True on success, false on error or timeout/
-    bool wait_micro_handshake(uint16_t mask, uint16_t timeout=1000);
+    bool wait_micro_handshake(uint16_t mask, uint16_t timeout = 1000);
 
     /// \brief Writes given opcode, followed by given value to the micro register.
     ///
@@ -65,13 +66,12 @@ class CaenV1290N : public asynPortDriver {
     /// \return True on success, false on error or timeout.
     bool read_micro(uint16_t opcode, uint16_t& value);
 
-
     /// \brief Performs a safe D16 VME bus write of the value to the offset
     /// \param offset The offset from the base address to write to
     /// \param value The value to write
     /// \return True on success, false on error
     bool writeD16(uint16_t offset, uint16_t value) {
-	return !devWriteProbe(sizeof(uint16_t), base+offset, &value);
+        return !devWriteProbe(sizeof(uint16_t), base + offset, &value);
     }
 
     /// \brief Performs a safe D16 VME bus read of the offset location
@@ -79,7 +79,7 @@ class CaenV1290N : public asynPortDriver {
     /// \param value The value to store the read data
     /// \return True on success, false on error
     bool readD16(uint16_t offset, uint16_t& value) {
-	return !devReadProbe(sizeof(uint16_t), base+offset, &value);
+        return !devReadProbe(sizeof(uint16_t), base + offset, &value);
     }
 
     /// \brief Performs a safe D32 VME bus write of the value to the offset
@@ -87,7 +87,7 @@ class CaenV1290N : public asynPortDriver {
     /// \param value The value to write
     /// \return True on success, false on error
     bool writeD32(uint32_t offset, uint32_t value) {
-	return !devWriteProbe(sizeof(uint32_t), base+offset, &value);
+        return !devWriteProbe(sizeof(uint32_t), base + offset, &value);
     }
 
     /// \brief Performs a safe D32 VME bus read of the offset location
@@ -95,13 +95,38 @@ class CaenV1290N : public asynPortDriver {
     /// \param value The value to store the read data
     /// \return True on success, false on error
     bool readD32(uint32_t offset, uint32_t& value) {
-	return !devReadProbe(sizeof(uint32_t), base+offset, &value);
+        return !devReadProbe(sizeof(uint32_t), base + offset, &value);
     }
 
     // // devWriteProbe is the OSI abstraction on top of vxMemProbe, so as expected,
     // // this appears to give the same result as CaenV1290N::writeD16
-    // long vx_writeD16(uint32_t offset, uint32_t value) {
-	// return vxMemProbe( (char *)(base+offset), VX_WRITE, 2, (char *)(&value));
+    // bool writeD32(uint32_t offset, uint32_t value) {
+    // printf("vxMemProbe write called\n");
+    // return !vxMemProbe( (char*)(base+offset), VX_WRITE, sizeof(uint32_t), (char*)(&value));
+    // }
+
+    // static long vxDevReadProbe (unsigned wordSize, volatile const void *ptr, void *pValue)
+    // {
+    // long status;
+    //
+    // status = vxMemProbe ((char *)ptr, VX_READ, wordSize, (char *) pValue);
+    // if (status!=OK) {
+    // return S_dev_noDevice;
+    // }
+    //
+    // return 0;
+    // }
+    //
+    // static long vxDevWriteProbe (unsigned wordSize, volatile void *ptr, const void *pValue)
+    // {
+    // long status;
+    //
+    // status = vxMemProbe ((char *)ptr, VX_WRITE, wordSize, (char *) pValue);
+    // if (status!=OK) {
+    // return S_dev_noDevice;
+    // }
+    //
+    // return 0;
     // }
 
   protected:

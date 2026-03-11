@@ -5,10 +5,8 @@
 #define MAX_CHANNELS 16
 
 namespace Register {
-// Data Buffer
-static const uint16_t OutBuf = 0x0000; // D32, R, Output Buffer
-
 // Configuration & Status Registers
+static const uint16_t OutBuf = 0x0000;          // D32, R, Output Buffer
 static const uint16_t Control = 0x1000;         // D16, R/W, Control Register
 static const uint16_t Status = 0x1002;          // D16, R, Status Register
 static const uint16_t IntLevel = 0x100A;        // D16, R/W, uint16_terrupt Level
@@ -37,7 +35,7 @@ static const uint16_t EventFifoStored = 0x103C; // D16, R, Event FIFO Stored
 static const uint16_t EventFifoStatus = 0x103E; // D16, R, Event FIFO Status
 static const uint16_t Dummy32 = 0x1200;         // D32, R/W, Dummy 32-bit
 static const uint16_t Dummy16 = 0x1204;         // D16, R/W, Dummy 16-bit
-} // namespace Reg
+} // namespace Register
 
 namespace Control {
 static const uint16_t BerrEn = (1 << 0);         // Bus Error enable for BLT

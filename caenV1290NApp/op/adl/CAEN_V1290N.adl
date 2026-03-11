@@ -106,7 +106,7 @@ menu {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EdgeDetectMode.VAL"
+		chan="$(P)V1290N:EdgeDetectMode.VAL"
 		clr=14
 		bclr=4
 	}
@@ -132,7 +132,7 @@ text {
 		height=20
 	}
 	monitor {
-		chan="namVME:V1290N:EdgeDetectModeRBV"
+		chan="$(P)V1290N:EdgeDetectModeRBV"
 		clr=54
 		bclr=4
 	}
@@ -147,7 +147,7 @@ menu {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:AcquisitionMode.VAL"
+		chan="$(P)V1290N:AcquisitionMode.VAL"
 		clr=14
 		bclr=4
 	}
@@ -173,7 +173,7 @@ text {
 		height=20
 	}
 	monitor {
-		chan="namVME:V1290N:AcquisitionModeRBV"
+		chan="$(P)V1290N:AcquisitionModeRBV"
 		clr=54
 		bclr=4
 	}
@@ -200,7 +200,7 @@ byte {
 		height=320
 	}
 	monitor {
-		chan="namVME:V1290N:EnableBitsRBV.VAL"
+		chan="$(P)V1290N:EnableBitsRBV.VAL"
 		clr=16
 		bclr=4
 	}
@@ -216,7 +216,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableAll.PROC"
+		chan="$(P)V1290N:EnableAll.PROC"
 		clr=14
 		bclr=51
 	}
@@ -231,7 +231,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:DisableAll.PROC"
+		chan="$(P)V1290N:DisableAll.PROC"
 		clr=14
 		bclr=51
 	}
@@ -246,7 +246,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.B0"
+		chan="$(P)V1290N:EnableBits.B0"
 		clr=14
 		bclr=51
 	}
@@ -261,7 +261,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.B0"
+		chan="$(P)V1290N:EnableBits.B0"
 		clr=14
 		bclr=51
 	}
@@ -276,7 +276,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.B1"
+		chan="$(P)V1290N:EnableBits.B1"
 		clr=14
 		bclr=51
 	}
@@ -291,7 +291,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.B1"
+		chan="$(P)V1290N:EnableBits.B1"
 		clr=14
 		bclr=51
 	}
@@ -306,7 +306,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.B2"
+		chan="$(P)V1290N:EnableBits.B2"
 		clr=14
 		bclr=51
 	}
@@ -321,7 +321,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.B2"
+		chan="$(P)V1290N:EnableBits.B2"
 		clr=14
 		bclr=51
 	}
@@ -336,7 +336,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.B3"
+		chan="$(P)V1290N:EnableBits.B3"
 		clr=14
 		bclr=51
 	}
@@ -351,7 +351,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.B3"
+		chan="$(P)V1290N:EnableBits.B3"
 		clr=14
 		bclr=51
 	}
@@ -366,7 +366,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.B4"
+		chan="$(P)V1290N:EnableBits.B4"
 		clr=14
 		bclr=51
 	}
@@ -381,7 +381,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.B4"
+		chan="$(P)V1290N:EnableBits.B4"
 		clr=14
 		bclr=51
 	}
@@ -396,7 +396,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.B5"
+		chan="$(P)V1290N:EnableBits.B5"
 		clr=14
 		bclr=51
 	}
@@ -411,7 +411,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.B5"
+		chan="$(P)V1290N:EnableBits.B5"
 		clr=14
 		bclr=51
 	}
@@ -426,7 +426,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.B6"
+		chan="$(P)V1290N:EnableBits.B6"
 		clr=14
 		bclr=51
 	}
@@ -441,7 +441,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.B6"
+		chan="$(P)V1290N:EnableBits.B6"
 		clr=14
 		bclr=51
 	}
@@ -456,7 +456,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.B7"
+		chan="$(P)V1290N:EnableBits.B7"
 		clr=14
 		bclr=51
 	}
@@ -471,7 +471,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.B7"
+		chan="$(P)V1290N:EnableBits.B7"
 		clr=14
 		bclr=51
 	}
@@ -486,7 +486,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.B8"
+		chan="$(P)V1290N:EnableBits.B8"
 		clr=14
 		bclr=51
 	}
@@ -501,7 +501,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.B8"
+		chan="$(P)V1290N:EnableBits.B8"
 		clr=14
 		bclr=51
 	}
@@ -516,7 +516,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.B9"
+		chan="$(P)V1290N:EnableBits.B9"
 		clr=14
 		bclr=51
 	}
@@ -531,7 +531,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.B9"
+		chan="$(P)V1290N:EnableBits.B9"
 		clr=14
 		bclr=51
 	}
@@ -546,7 +546,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.BA"
+		chan="$(P)V1290N:EnableBits.BA"
 		clr=14
 		bclr=51
 	}
@@ -561,7 +561,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.BA"
+		chan="$(P)V1290N:EnableBits.BA"
 		clr=14
 		bclr=51
 	}
@@ -576,7 +576,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.BB"
+		chan="$(P)V1290N:EnableBits.BB"
 		clr=14
 		bclr=51
 	}
@@ -591,7 +591,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.BB"
+		chan="$(P)V1290N:EnableBits.BB"
 		clr=14
 		bclr=51
 	}
@@ -606,7 +606,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.BC"
+		chan="$(P)V1290N:EnableBits.BC"
 		clr=14
 		bclr=51
 	}
@@ -621,7 +621,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.BC"
+		chan="$(P)V1290N:EnableBits.BC"
 		clr=14
 		bclr=51
 	}
@@ -636,7 +636,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.BD"
+		chan="$(P)V1290N:EnableBits.BD"
 		clr=14
 		bclr=51
 	}
@@ -651,7 +651,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.BD"
+		chan="$(P)V1290N:EnableBits.BD"
 		clr=14
 		bclr=51
 	}
@@ -666,7 +666,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.BE"
+		chan="$(P)V1290N:EnableBits.BE"
 		clr=14
 		bclr=51
 	}
@@ -681,7 +681,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.BE"
+		chan="$(P)V1290N:EnableBits.BE"
 		clr=14
 		bclr=51
 	}
@@ -696,7 +696,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.BF"
+		chan="$(P)V1290N:EnableBits.BF"
 		clr=14
 		bclr=51
 	}
@@ -711,7 +711,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:EnableBits.BF"
+		chan="$(P)V1290N:EnableBits.BF"
 		clr=14
 		bclr=51
 	}
@@ -946,7 +946,7 @@ text {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:WindowWidth.VAL"
+		chan="$(P)V1290N:WindowWidth.VAL"
 		clr=14
 		bclr=51
 	}
@@ -961,7 +961,7 @@ text {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:WindowOffset.VAL"
+		chan="$(P)V1290N:WindowOffset.VAL"
 		clr=14
 		bclr=51
 	}
@@ -1002,7 +1002,7 @@ byte {
 		height=320
 	}
 	monitor {
-		chan="namVME:V1290N:Status.VAL"
+		chan="$(P)V1290N:Status.VAL"
 		clr=16
 		bclr=4
 	}
@@ -1018,7 +1018,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:SoftwareClear.PROC"
+		chan="$(P)V1290N:SoftwareClear.PROC"
 		clr=14
 		bclr=51
 	}
@@ -1033,7 +1033,7 @@ byte {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:test.PROC"
+		chan="$(P)V1290N:test.PROC"
 		clr=14
 		bclr=51
 	}
@@ -1061,7 +1061,7 @@ byte {
 		height=320
 	}
 	monitor {
-		chan="namVME:V1290N:Control.VAL"
+		chan="$(P)V1290N:Control.VAL"
 		clr=16
 		bclr=4
 	}
@@ -1103,7 +1103,7 @@ text {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:TestRegister.VAL"
+		chan="$(P)V1290N:TestRegister.VAL"
 		clr=14
 		bclr=51
 	}
@@ -1470,7 +1470,7 @@ text {
 		height=15
 	}
 	monitor {
-		chan="namVME:V1290N:TestRegisterRBV.VAL"
+		chan="$(P)V1290N:TestRegisterRBV.VAL"
 		clr=54
 		bclr=4
 	}
@@ -1499,7 +1499,7 @@ text {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:Dummy16.VAL"
+		chan="$(P)V1290N:Dummy16.VAL"
 		clr=14
 		bclr=51
 	}
@@ -1515,7 +1515,7 @@ text {
 		height=15
 	}
 	monitor {
-		chan="namVME:V1290N:Dummy16RBV.VAL"
+		chan="$(P)V1290N:Dummy16RBV.VAL"
 		clr=54
 		bclr=4
 	}
@@ -1531,7 +1531,7 @@ text {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:Dummy32.VAL"
+		chan="$(P)V1290N:Dummy32.VAL"
 		clr=14
 		bclr=51
 	}
@@ -1560,7 +1560,7 @@ text {
 		height=15
 	}
 	monitor {
-		chan="namVME:V1290N:Dummy32RBV.VAL"
+		chan="$(P)V1290N:Dummy32RBV.VAL"
 		clr=54
 		bclr=4
 	}
@@ -1576,7 +1576,7 @@ text {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:SoftwareTrigger.PROC"
+		chan="$(P)V1290N:SoftwareTrigger.PROC"
 		clr=14
 		bclr=51
 	}
@@ -1591,7 +1591,7 @@ text {
 		height=20
 	}
 	monitor {
-		chan="namVME:V1290N:EventsStored.VAL"
+		chan="$(P)V1290N:EventsStored.VAL"
 		clr=54
 		bclr=4
 	}
@@ -1632,7 +1632,7 @@ menu {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:TDCHeaderTrailer.VAL"
+		chan="$(P)V1290N:TDCHeaderTrailer.VAL"
 		clr=14
 		bclr=4
 	}
@@ -1645,7 +1645,7 @@ menu {
 		height=20
 	}
 	monitor {
-		chan="namVME:V1290N:TDCHeaderTrailerRBV"
+		chan="$(P)V1290N:TDCHeaderTrailerRBV"
 		clr=54
 		bclr=4
 	}
@@ -1660,7 +1660,7 @@ menu {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:Control.B0"
+		chan="$(P)V1290N:Control.B0"
 		clr=14
 		bclr=51
 	}
@@ -1675,7 +1675,7 @@ menu {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:Control.B0"
+		chan="$(P)V1290N:Control.B0"
 		clr=14
 		bclr=51
 	}
@@ -1690,7 +1690,7 @@ menu {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:Control.B1"
+		chan="$(P)V1290N:Control.B1"
 		clr=14
 		bclr=51
 	}
@@ -1705,7 +1705,7 @@ menu {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:Control.B1"
+		chan="$(P)V1290N:Control.B1"
 		clr=14
 		bclr=51
 	}
@@ -1720,7 +1720,7 @@ menu {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:Control.B2"
+		chan="$(P)V1290N:Control.B2"
 		clr=14
 		bclr=51
 	}
@@ -1735,7 +1735,7 @@ menu {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:Control.B2"
+		chan="$(P)V1290N:Control.B2"
 		clr=14
 		bclr=51
 	}
@@ -1750,7 +1750,7 @@ menu {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:Control.B3"
+		chan="$(P)V1290N:Control.B3"
 		clr=14
 		bclr=51
 	}
@@ -1765,7 +1765,7 @@ menu {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:Control.B3"
+		chan="$(P)V1290N:Control.B3"
 		clr=14
 		bclr=51
 	}
@@ -1780,7 +1780,7 @@ menu {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:Control.B4"
+		chan="$(P)V1290N:Control.B4"
 		clr=14
 		bclr=51
 	}
@@ -1795,7 +1795,7 @@ menu {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:Control.B4"
+		chan="$(P)V1290N:Control.B4"
 		clr=14
 		bclr=51
 	}
@@ -1810,7 +1810,7 @@ menu {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:Control.B5"
+		chan="$(P)V1290N:Control.B5"
 		clr=14
 		bclr=51
 	}
@@ -1825,7 +1825,7 @@ menu {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:Control.B5"
+		chan="$(P)V1290N:Control.B5"
 		clr=14
 		bclr=51
 	}
@@ -1840,7 +1840,7 @@ menu {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:Control.B6"
+		chan="$(P)V1290N:Control.B6"
 		clr=14
 		bclr=51
 	}
@@ -1855,7 +1855,7 @@ menu {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:Control.B6"
+		chan="$(P)V1290N:Control.B6"
 		clr=14
 		bclr=51
 	}
@@ -1870,7 +1870,7 @@ menu {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:Control.B7"
+		chan="$(P)V1290N:Control.B7"
 		clr=14
 		bclr=51
 	}
@@ -1885,7 +1885,7 @@ menu {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:Control.B7"
+		chan="$(P)V1290N:Control.B7"
 		clr=14
 		bclr=51
 	}
@@ -1900,7 +1900,7 @@ menu {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:Control.B8"
+		chan="$(P)V1290N:Control.B8"
 		clr=14
 		bclr=51
 	}
@@ -1915,7 +1915,7 @@ menu {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:Control.B8"
+		chan="$(P)V1290N:Control.B8"
 		clr=14
 		bclr=51
 	}
@@ -1930,7 +1930,7 @@ menu {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:Control.B12"
+		chan="$(P)V1290N:Control.B12"
 		clr=14
 		bclr=51
 	}
@@ -1945,7 +1945,7 @@ menu {
 		height=20
 	}
 	control {
-		chan="namVME:V1290N:Control.B12"
+		chan="$(P)V1290N:Control.B12"
 		clr=14
 		bclr=51
 	}
