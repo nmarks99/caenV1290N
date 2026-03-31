@@ -70,7 +70,7 @@ class CaenV1290N : public asynPortDriver {
     /// \param offset The offset from the base address to write to
     /// \param value The value to write
     /// \return True on success, false on error
-    bool writeD16(uint16_t offset, uint16_t value) {
+    bool safe_writeD16(uint16_t offset, uint16_t value) {
         return !devWriteProbe(sizeof(uint16_t), base + offset, &value);
     }
 
@@ -78,7 +78,7 @@ class CaenV1290N : public asynPortDriver {
     /// \param offset The offset from the base address to write to
     /// \param value The value to store the read data
     /// \return True on success, false on error
-    bool readD16(uint16_t offset, uint16_t& value) {
+    bool safe_readD16(uint16_t offset, uint16_t& value) {
         return !devReadProbe(sizeof(uint16_t), base + offset, &value);
     }
 
@@ -86,7 +86,7 @@ class CaenV1290N : public asynPortDriver {
     /// \param offset The offset from the base address to write to
     /// \param value The value to write
     /// \return True on success, false on error
-    bool writeD32(uint32_t offset, uint32_t value) {
+    bool safe_writeD32(uint32_t offset, uint32_t value) {
         return !devWriteProbe(sizeof(uint32_t), base + offset, &value);
     }
 
@@ -94,40 +94,26 @@ class CaenV1290N : public asynPortDriver {
     /// \param offset The offset from the base address to write to
     /// \param value The value to store the read data
     /// \return True on success, false on error
-    bool readD32(uint32_t offset, uint32_t& value) {
+    bool safe_readD32(uint32_t offset, uint32_t& value) {
         return !devReadProbe(sizeof(uint32_t), base + offset, &value);
     }
 
-    // // devWriteProbe is the OSI abstraction on top of vxMemProbe, so as expected,
-    // // this appears to give the same result as CaenV1290N::writeD16
-    // bool writeD32(uint32_t offset, uint32_t value) {
-    // printf("vxMemProbe write called\n");
-    // return !vxMemProbe( (char*)(base+offset), VX_WRITE, sizeof(uint32_t), (char*)(&value));
-    // }
 
-    // static long vxDevReadProbe (unsigned wordSize, volatile const void *ptr, void *pValue)
-    // {
-    // long status;
-    //
-    // status = vxMemProbe ((char *)ptr, VX_READ, wordSize, (char *) pValue);
-    // if (status!=OK) {
-    // return S_dev_noDevice;
-    // }
-    //
-    // return 0;
-    // }
-    //
-    // static long vxDevWriteProbe (unsigned wordSize, volatile void *ptr, const void *pValue)
-    // {
-    // long status;
-    //
-    // status = vxMemProbe ((char *)ptr, VX_WRITE, wordSize, (char *) pValue);
-    // if (status!=OK) {
-    // return S_dev_noDevice;
-    // }
-    //
-    // return 0;
-    // }
+    // Unprotected direct memory access reads/writes
+
+    void writeD16(uint16_t offset, uint16_t value) {
+        *(volatile uint16_t*)(base + offset) = value;
+    }
+    void readD16(uint16_t offset, uint16_t& value) {
+        value = *(volatile uint16_t*)(base + offset);
+    }
+
+    void writeD32(uint32_t offset, uint32_t value) {
+        *(volatile uint32_t*)(base + offset) = value;
+    }
+    void readD32(uint32_t offset, uint32_t& value) {
+        value = *(volatile uint32_t*)(base + offset);
+    }
 
   protected:
     int acquisitionModeId_;
